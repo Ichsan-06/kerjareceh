@@ -4,7 +4,7 @@ import NavBarNotifications from '@/layouts/components/NavBarNotifications.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import NavItems from '@/layouts/components/NavItems.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
-import logo from '@images/logo.svg?raw'
+
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 </script>
 
@@ -51,16 +51,11 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
         to="/"
         class="app-logo app-title-wrapper"
       >
-        <!-- eslint-disable vue/no-v-html -->
-        <div
-          class="d-flex"
-          v-html="logo"
-        />
-        <!-- eslint-enable -->
+        <img src="@images/logo2.png" alt="Logo" width="200"/>
 
-        <h1 class="app-logo-title">
+        <!-- <h1 class="app-logo-title">
           sneat
-        </h1>
+        </h1> -->
       </RouterLink>
 
       <IconBtn

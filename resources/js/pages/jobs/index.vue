@@ -1,22 +1,48 @@
 <script setup>
 import axios from '@/plugins/axios';
 import { formatCurrency, formatDate } from '@/utils/formatters';
+import { useIntersectionObserver } from '@vueuse/core';
 import { onMounted, ref } from 'vue';
 
 const jobs = ref([]);
 const loading = ref(false);
+const page = ref(1);
+const lastPage = ref(1);
+const target = ref(null);
 
-const fetchJobs = async () => {
+const fetchJobs = async (isLoadMore = false) => {
+  if (loading.value) return;
+  if (isLoadMore && page.value >= lastPage.value) return;
+
   loading.value = true;
   try {
-    const response = await axios.get('/api/jobs');
-    jobs.value = response.data.data;
+    const nextPage = isLoadMore ? page.value + 1 : 1;
+    const response = await axios.get(`/api/jobs?page=${nextPage}`);
+    
+    if (isLoadMore) {
+      jobs.value.push(...response.data.data);
+      page.value = nextPage;
+    } else {
+      jobs.value = response.data.data;
+      page.value = 1;
+    }
+    
+    lastPage.value = response.data.last_page;
   } catch (error) {
     console.error('Error fetching jobs:', error);
   } finally {
     loading.value = false;
   }
 };
+
+useIntersectionObserver(
+  target,
+  ([{ isIntersecting }]) => {
+    if (isIntersecting) {
+      fetchJobs(true);
+    }
+  },
+)
 
 const deleteJob = async (id) => {
   if (!confirm('Apakah anda yakin ingin menghapus pekerjaan ini?')) return;
@@ -93,12 +119,12 @@ onMounted(() => {
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading" class="text-center my-6">
+        <div v-if="loading && jobs.length === 0" class="text-center my-6">
           <VProgressCircular indeterminate color="primary" />
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="jobs.length === 0" class="text-center my-6 text-medium-emphasis">
+        <div v-else-if="jobs.length === 0 && !loading" class="text-center my-6 text-medium-emphasis">
           <VIcon icon="bx-briefcase" size="large" class="mb-2" />
           <p>Belum ada pekerjaan tersedia.</p>
         </div>
@@ -230,6 +256,17 @@ onMounted(() => {
                 </div>
             </VExpandTransition>
           </VCard>
+
+
+           <!-- Infinite Scroll Target -->
+           <div ref="target" class="text-center py-4" v-if="jobs.length > 0 && page < lastPage">
+              <VProgressCircular indeterminate color="primary" size="24" />
+           </div>
+           
+           <div v-if="page >= lastPage && jobs.length > 0" class="text-center text-caption text-medium-emphasis py-4">
+              Semua pekerjaan telah ditampilkan
+           </div>
+
         </div>
 
       </VCol>
