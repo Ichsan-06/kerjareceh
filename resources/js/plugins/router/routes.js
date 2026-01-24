@@ -73,6 +73,14 @@ export const routes = [
         component: () => import('@/pages/feedback/index.vue'),
       },
       {
+        path: 'withdraw',
+        component: () => import('@/pages/withdraw/index.vue'),
+      },
+      {
+        path: 'admin/withdraw',
+        component: () => import('@/pages/admin/withdraw/index.vue'),
+      },
+      {
         path: 'typography',
         component: () => import('@/pages/typography.vue'),
       },

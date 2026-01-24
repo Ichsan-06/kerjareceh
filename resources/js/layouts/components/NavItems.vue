@@ -270,6 +270,24 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
   <VerticalNavLink
+    v-if="can('create withdraw')"
+    :item="{
+      title: 'Pencairan Saldo',
+      icon: 'bx-money-withdraw',
+      to: '/withdraw',
+    }"
+  />
+
+  <VerticalNavLink
+    v-if="can('read admin_withdraw')"
+    :item="{
+      title: 'Verifikasi Penarikan',
+      icon: 'bx-shield-quarter',
+      to: '/admin/withdraw',
+    }"
+  />
+
+  <VerticalNavLink
     v-if="can('read feedback')"
     :item="{
       title: 'Feedback',

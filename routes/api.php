@@ -53,6 +53,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('notifications/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
 
     Route::post('profile', [\App\Http\Controllers\ProfileController::class, 'update']);
+    Route::post('profile', [\App\Http\Controllers\ProfileController::class, 'update']);
     Route::post('profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword']);
+
+    Route::get('withdraw', [\App\Http\Controllers\WithdrawController::class, 'index']);
+    Route::post('withdraw', [\App\Http\Controllers\WithdrawController::class, 'store']); // User Request
+
+    Route::get('admin/withdraw', [\App\Http\Controllers\AdminWithdrawController::class, 'index']);
+    Route::post('admin/withdraw/{id}/approve', [\App\Http\Controllers\AdminWithdrawController::class, 'approve']);
+    Route::post('admin/withdraw/{id}/reject', [\App\Http\Controllers\AdminWithdrawController::class, 'reject']);
 });
 // });

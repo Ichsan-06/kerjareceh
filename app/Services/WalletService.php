@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletLock;
 use App\Models\WalletTransaction;
+use App\Models\WithdrawRequest;
 use Illuminate\Support\Facades\DB;
 
 class WalletService
@@ -218,6 +219,90 @@ class WalletService
                 'amount' => $amount,
                 'reference_type' => get_class($ref),
                 'reference_id' => $ref->id,
+            ]);
+
+            return true;
+        });
+    }
+
+    /**
+     * Request a Withdraw (Lock Funds).
+     */
+    public function requestWithdraw(User $user, $amount)
+    {
+        return DB::transaction(function () use ($user, $amount) {
+            $wallet = $user->wallet()->firstOrCreate([]);
+
+            if ($wallet->balance < $amount) {
+                throw new \Exception('Insufficient funds.');
+            }
+
+            // Lock funds
+            $wallet->balance -= $amount;
+            $wallet->locked_balance += $amount;
+            $wallet->save();
+
+            // Transaction Record
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'type' => 'withdraw_lock', // Custom type for internal tracking
+                'amount' => $amount,
+                'reference_type' => WithdrawRequest::class,
+                'reference_id' => 0, // Placeholder, will update after create? Or context handles it. 
+                // Service is called *before* or *during* request creation. 
+                // Let's pass the request object ideally, but circular dependency if creating.
+                // Simplified: Just lock here. Controller creates Request.
+            ]);
+
+            return true;
+        });
+    }
+
+    /**
+     * Approve Withdraw (Burn Locked Funds).
+     */
+    public function approveWithdraw($withdrawRequest)
+    {
+        return DB::transaction(function () use ($withdrawRequest) {
+            $user = $withdrawRequest->user;
+            $wallet = $user->wallet;
+
+            // Burn locked funds (remove from system as it is sent via bank)
+            $wallet->locked_balance -= $withdrawRequest->amount;
+            $wallet->save();
+
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'type' => 'withdraw',
+                'amount' => $withdrawRequest->amount,
+                'reference_type' => get_class($withdrawRequest),
+                'reference_id' => $withdrawRequest->id,
+            ]);
+
+            return true;
+        });
+    }
+
+    /**
+     * Reject Withdraw (Refund Locked Funds).
+     */
+    public function rejectWithdraw($withdrawRequest)
+    {
+        return DB::transaction(function () use ($withdrawRequest) {
+            $user = $withdrawRequest->user;
+            $wallet = $user->wallet;
+
+            // Refund
+            $wallet->locked_balance -= $withdrawRequest->amount;
+            $wallet->balance += $withdrawRequest->amount;
+            $wallet->save();
+
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'type' => 'refund',
+                'amount' => $withdrawRequest->amount,
+                'reference_type' => get_class($withdrawRequest),
+                'reference_id' => $withdrawRequest->id,
             ]);
 
             return true;

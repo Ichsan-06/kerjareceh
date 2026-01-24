@@ -61,6 +61,11 @@ class RoleSeeder extends Seeder
             'approve topup',
 
             'update profile',
+
+            'create withdraw',
+            'read withdraw',
+            'read admin_withdraw',
+            'approve withdraw',
         ];
 
         foreach ($permissions as $permission) {
