@@ -1,5 +1,5 @@
 <template>
-  <a
+  <!-- <a
     color="error"
     class="buy-now-button"
     href="https://themeselection.com/item/sneat-vuetify-vuejs-laravel-admin-template/"
@@ -45,7 +45,7 @@
         </VCardText>
       </VCard>
     </VMenu>
-  </a>
+  </a> -->
 </template>
 
 <style lang="scss" scoped>

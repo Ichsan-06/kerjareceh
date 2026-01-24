@@ -201,4 +201,26 @@ class WalletService
             return true;
         });
     }
+    /**
+     * Credit User Wallet from Top Up.
+     */
+    public static function creditTopUp($user, $amount, $ref)
+    {
+        return DB::transaction(function () use ($user, $amount, $ref) {
+            $wallet = $user->wallet()->firstOrCreate(['balance' => 0]);
+
+            $wallet->balance += $amount;
+            $wallet->save();
+
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'type' => 'topup',
+                'amount' => $amount,
+                'reference_type' => get_class($ref),
+                'reference_id' => $ref->id,
+            ]);
+
+            return true;
+        });
+    }
 }

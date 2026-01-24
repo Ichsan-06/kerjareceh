@@ -1,153 +1,144 @@
 <script setup>
-import AnalyticsCongratulations from '@/views/dashboard/AnalyticsCongratulations.vue'
-import AnalyticsFinanceTabs from '@/views/dashboard/AnalyticsFinanceTab.vue'
-import AnalyticsOrderStatistics from '@/views/dashboard/AnalyticsOrderStatistics.vue'
-import AnalyticsProfitReport from '@/views/dashboard/AnalyticsProfitReport.vue'
-import AnalyticsTotalRevenue from '@/views/dashboard/AnalyticsTotalRevenue.vue'
-import AnalyticsTransactions from '@/views/dashboard/AnalyticsTransactions.vue'
+import axios from '@/plugins/axios';
+import { formatCurrency, formatDate } from '@/utils/formatters';
+import CardStatisticsVertical from '@core/components/cards/CardStatisticsVertical.vue';
+import { onMounted, ref } from 'vue';
 
 // 👉 Images
-import chart from '@images/cards/chart-success.png'
-import card from '@images/cards/credit-card-primary.png'
-import paypal from '@images/cards/paypal-error.png'
-import wallet from '@images/cards/wallet-info.png'
+import chart from '@images/cards/chart-success.png';
+import card from '@images/cards/credit-card-primary.png';
+import paypal from '@images/cards/paypal-error.png';
+import walletImage from '@images/cards/wallet-info.png';
+
+const dashboardData = ref(null);
+const loading = ref(false);
+
+const fetchDashboardData = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get('/api/dashboard');
+    dashboardData.value = response.data;
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchDashboardData();
+});
 </script>
 
 <template>
-  <VRow>
+  <VRow v-if="loading">
+      <VCol cols="12" class="text-center">
+          <VProgressCircular indeterminate color="primary" />
+      </VCol>
+  </VRow>
+  
+  <VRow v-else-if="dashboardData">
     <!-- 👉 Congratulations -->
-    <VCol
-      cols="12"
-      md="8"
-    >
+    <VCol cols="12" md="8">
       <AnalyticsCongratulations />
     </VCol>
 
-    <VCol
-      cols="12"
-      sm="4"
-    >
+    <VCol cols="12" sm="4">
       <VRow>
-        <!-- 👉 Profit -->
-        <VCol
-          cols="12"
-          md="6"
-        >
+        <!-- 👉 Balance -->
+        <VCol cols="12" md="6">
           <CardStatisticsVertical
             v-bind="{
-              title: 'Profit',
+              title: 'Saldo Saat Ini',
+              image: walletImage,
+              stats: formatCurrency(dashboardData.stats.balance),
+              change: 0, 
+            }"
+          />
+        </VCol>
+
+        <!-- 👉 Earnings -->
+        <VCol cols="12" md="6">
+          <CardStatisticsVertical
+            v-bind="{
+              title: 'Total Penghasilan',
               image: chart,
-              stats: '$12,628',
-              change: 72.80,
-            }"
-          />
-        </VCol>
-
-        <!-- 👉 Sales -->
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <CardStatisticsVertical
-            v-bind="{
-              title: 'Sales',
-              image: wallet,
-              stats: '$4,679',
-              change: 28.42,
+              stats: formatCurrency(dashboardData.stats.total_earned),
+              change: 0,
             }"
           />
         </VCol>
       </VRow>
     </VCol>
 
-    <!-- 👉 Total Revenue -->
-    <VCol
-      cols="12"
-      md="8"
-      order="2"
-      order-md="1"
-    >
-      <AnalyticsTotalRevenue />
-    </VCol>
-
-    <VCol
-      cols="12"
-      sm="8"
-      md="4"
-      order="1"
-      order-md="2"
-    >
-      <VRow>
-        <!-- 👉 Payments -->
-        <VCol
-          cols="12"
-          sm="6"
-        >
-          <CardStatisticsVertical
-            v-bind=" {
-              title: 'Payments',
-              image: paypal,
-              stats: '$2,468',
-              change: -14.82,
-            }"
-          />
+    <!-- 👉 Jobs Stats -->
+    <VCol cols="12" md="8">
+       <VRow>
+        <VCol cols="12" md="4">
+             <CardStatisticsVertical
+                v-bind="{
+                title: 'Pekerjaan Selesai',
+                image: card,
+                stats: dashboardData.stats.jobs_completed_count.toString(),
+                change: 0,
+                }"
+            />
         </VCol>
-
-        <!-- 👉 Revenue -->
-        <VCol
-          cols="12"
-          sm="6"
-        >
-          <CardStatisticsVertical
-            v-bind="{
-              title: 'Transactions',
-              image: card,
-              stats: '$14,857',
-              change: 28.14,
-            }"
-          />
+         <VCol cols="12" md="4">
+             <CardStatisticsVertical
+                v-bind="{
+                title: 'Pekerjaan Diambil',
+                image: paypal,
+                stats: dashboardData.stats.jobs_taken_count.toString(),
+                change: 0,
+                }"
+            />
         </VCol>
-      </VRow>
-
-      <VRow>
-        <!-- 👉 Profit Report -->
-        <VCol
-          cols="12"
-          sm="12"
-        >
-          <AnalyticsProfitReport />
+         <VCol cols="12" md="4">
+             <CardStatisticsVertical
+                v-bind="{
+                title: 'Pekerjaan Aktif Diposting',
+                image: walletImage,
+                stats: dashboardData.stats.jobs_posted_count.toString(),
+                change: 0,
+                }"
+            />
         </VCol>
-      </VRow>
+       </VRow>
     </VCol>
 
-    <!-- 👉 Order Statistics -->
-    <VCol
-      cols="12"
-      md="4"
-      sm="6"
-      order="3"
-    >
-      <AnalyticsOrderStatistics />
-    </VCol>
-
-    <!-- 👉 Tabs chart -->
-    <VCol
-      cols="12"
-      md="4"
-      sm="6"
-      order="3"
-    >
-      <AnalyticsFinanceTabs />
-    </VCol>
-
-    <!-- 👉 Transactions -->
-    <VCol
-      cols="12"
-      md="4"
-      sm="6"
-      order="3"
-    >
-      <AnalyticsTransactions />
+    <VCol cols="12" md="4">
+        <!-- Recent Activity / Transactions Brief -->
+         <VCard title="Aktivitas Terbaru">
+            <VList density="compact">
+                <VListItem v-for="transaction in dashboardData.recent_activity" :key="transaction.id">
+                    <template #prepend>
+                        <VIcon 
+                            :icon="transaction.type === 'fee' || transaction.type === 'topup' ? 'bx-up-arrow-circle' : 'bx-down-arrow-circle'" 
+                            :color="transaction.type === 'fee' || transaction.type === 'topup' ? 'success' : 'error'"
+                        />
+                    </template>
+                    <VListItemTitle class="font-weight-medium text-capitalize">
+                        {{ transaction.type }}
+                    </VListItemTitle>
+                    <VListItemSubtitle>
+                        {{ formatDate(transaction.created_at) }}
+                    </VListItemSubtitle>
+                    <template #append>
+                        <span :class="transaction.type === 'fee' || transaction.type === 'topup' ? 'text-success' : 'text-error'">
+                            {{ transaction.type === 'fee' || transaction.type === 'topup' ? '+' : '-' }}
+                            {{ formatCurrency(transaction.amount) }}
+                        </span>
+                    </template>
+                </VListItem>
+                 <VListItem v-if="dashboardData.recent_activity.length === 0">
+                    <VListItemTitle class="text-medium-emphasis text-center">Belum ada aktivitas.</VListItemTitle>
+                </VListItem>
+            </VList>
+            <VCardActions>
+                <VBtn block variant="tonal" to="/wallet">Lihat Dompet</VBtn>
+            </VCardActions>
+         </VCard>
     </VCol>
   </VRow>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
 import axios from '@/plugins/axios';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -9,9 +9,20 @@ const form = ref({
   name: '',
   email: '',
   password: '',
+  role: null,
 });
 
+const roles = ref([]);
 const errors = ref({});
+
+const fetchRoles = async () => {
+    try {
+        const response = await axios.get('/api/roles');
+        roles.value = response.data;
+    } catch (error) {
+        console.error('Error fetching roles:', error);
+    }
+};
 
 const submit = async () => {
   try {
@@ -25,17 +36,21 @@ const submit = async () => {
     }
   }
 };
+
+onMounted(() => {
+    fetchRoles();
+});
 </script>
 
 <template>
-  <VCard title="Add New User">
+  <VCard title="Tambah Pengguna Baru">
     <VCardText>
       <VForm @submit.prevent="submit">
         <VRow>
           <VCol cols="12">
             <VTextField
               v-model="form.name"
-              label="Name"
+              label="Nama"
               :error-messages="errors.name"
               required
             />
@@ -49,6 +64,18 @@ const submit = async () => {
               required
             />
           </VCol>
+           <VCol cols="12">
+            <VSelect
+              v-model="form.role"
+              :items="roles"
+              item-title="name"
+              item-value="name"
+              label="Peran / Role"
+              :error-messages="errors.role"
+              required
+            />
+          </VCol>
+
           <VCol cols="12">
             <VTextField
               v-model="form.password"
@@ -59,14 +86,14 @@ const submit = async () => {
             />
           </VCol>
           <VCol cols="12" class="d-flex gap-4">
-            <VBtn type="submit">Submit</VBtn>
+            <VBtn type="submit">Simpan</VBtn>
             <VBtn
               type="reset"
               color="secondary"
               variant="tonal"
               to="/users"
             >
-              Cancel
+              Batal
             </VBtn>
           </VCol>
         </VRow>

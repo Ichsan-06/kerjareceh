@@ -5,21 +5,25 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const userData = ref({ name: 'User', role: 'Member' })
+const userData = ref({ name: 'User', role: 'Member', avatar: avatar1 })
+
+const fetchUser = async () => {
+    try {
+        const response = await axios.get('/api/user');
+        const user = response.data;
+        userData.value = {
+            name: user.name,
+            role: 'Member', // Or fetch role
+            avatar: user.avatar ? `/storage/${user.avatar}` : avatar1
+        };
+        localStorage.setItem('user', JSON.stringify(userData.value));
+    } catch (error) {
+        console.error('Error fetching user:', error);
+    }
+}
 
 onMounted(() => {
-  const userStr = localStorage.getItem('user')
-  if (userStr) {
-    try {
-      const user = JSON.parse(userStr)
-      userData.value = {
-        name: user.name || 'User',
-        role: 'Admin' // You might want to fetch role from API or user object
-      }
-    } catch (e) {
-      console.error('Error parsing user data', e)
-    }
-  }
+    fetchUser();
 })
 
 const logout = async () => {
@@ -49,7 +53,7 @@ const logout = async () => {
       color="primary"
       variant="tonal"
     >
-      <VImg :src="avatar1" />
+      <VImg :src="userData.avatar" />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -74,7 +78,7 @@ const logout = async () => {
                     color="primary"
                     variant="tonal"
                   >
-                    <VImg :src="avatar1" />
+                    <VImg :src="userData.avatar" />
                   </VAvatar>
                 </VBadge>
               </VListItemAction>
@@ -101,7 +105,7 @@ const logout = async () => {
           </VListItem>
 
           <!-- 👉 Settings -->
-          <VListItem link>
+          <VListItem link to="/account-settings">
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -114,7 +118,7 @@ const logout = async () => {
           </VListItem>
 
           <!-- 👉 Pricing -->
-          <VListItem link>
+          <!-- <VListItem link>
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -124,10 +128,10 @@ const logout = async () => {
             </template>
 
             <VListItemTitle>Pricing</VListItemTitle>
-          </VListItem>
+          </VListItem> -->
 
           <!-- 👉 FAQ -->
-          <VListItem link>
+          <!-- <VListItem link>
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -137,7 +141,7 @@ const logout = async () => {
             </template>
 
             <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem>
+          </VListItem> -->
 
           <!-- Divider -->
           <VDivider class="my-2" />

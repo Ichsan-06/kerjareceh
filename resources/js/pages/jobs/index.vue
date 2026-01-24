@@ -1,7 +1,6 @@
 <script setup>
 import axios from '@/plugins/axios';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import avatar1 from '@images/avatars/avatar-1.png'; // Placeholder avatar
 import { onMounted, ref } from 'vue';
 
 const jobs = ref([]);
@@ -111,8 +110,9 @@ onMounted(() => {
             <!-- Card Header: User Info -->
             <VCardItem>
               <template #prepend>
-                <VAvatar size="40">
-                  <VImg :src="avatar1" />
+                <VAvatar size="40" :variant="!job.provider?.avatar ? 'tonal' : undefined" color="primary">
+                  <VImg v-if="job.provider?.avatar" :src="`/storage/${job.provider.avatar}`" />
+                  <span v-else>{{ job.provider?.name?.charAt(0) }}</span>
                 </VAvatar>
               </template>
               <VCardTitle>{{ job.provider ? job.provider.name : 'Unknown Provider' }}</VCardTitle>
@@ -197,8 +197,9 @@ onMounted(() => {
                         </div>
                         <div v-else-if="job.comments && job.comments.length > 0" class="mb-4">
                             <div v-for="comment in job.comments" :key="comment.id" class="d-flex gap-3 mb-3">
-                                <VAvatar size="32" color="secondary" variant="tonal">
-                                    {{ comment.user.name.charAt(0) }}
+                                <VAvatar size="32" color="secondary" :variant="!comment.user.avatar ? 'tonal' : undefined">
+                                    <VImg v-if="comment.user.avatar" :src="`/storage/${comment.user.avatar}`" />
+                                    <span v-else>{{ comment.user.name.charAt(0) }}</span>
                                 </VAvatar>
                                 <div class="bg-grey-100 pa-2 rounded flex-grow-1">
                                     <div class="d-flex justify-space-between align-center">

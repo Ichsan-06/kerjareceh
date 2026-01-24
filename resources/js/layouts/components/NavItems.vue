@@ -1,62 +1,18 @@
 <script setup>
-import VerticalNavGroup from '@layouts/components/VerticalNavGroup.vue';
+import { can } from '@/utils/permissions';
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
 import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle.vue';
 </script>
 
 <template>
-  <!-- 👉 Dashboards -->
-  <VerticalNavGroup
+  <!-- 👉 Dashboard -->
+  <VerticalNavLink
     :item="{
-      title: 'Dashboards',
-      badgeContent: '5',
-      badgeClass: 'bg-error',
+      title: 'Dashboard',
       icon: 'bx-home-smile',
+      to: '/dashboard',
     }"
-  >
-    <VerticalNavLink
-      :item="{
-        title: 'Analytics',
-        to: '/dashboard',
-      }"
-    />
-    <!-- <VerticalNavLink
-      :item="{
-        title: 'CRM',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/dashboards/crm',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
-    /> -->
-    <VerticalNavLink
-      :item="{
-        title: 'ECommerce',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/dashboards/ecommerce',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Academy',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/dashboards/academy',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Logistics',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/dashboards/logistics',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
-    />
-  </VerticalNavGroup>
+  />
 
   <!-- 👉 Front Pages -->
   <!-- <VerticalNavGroup
@@ -211,12 +167,14 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
 
   <!-- 👉 Users & Roles -->
   <VerticalNavSectionTitle
+    v-if="can('read user') || can('read role')"
     :item="{
       heading: 'Pengguna & Peran',
     }"
   />
 
   <VerticalNavLink
+    v-if="can('read user')"
     :item="{
       title: 'Pengguna',
       icon: 'bx-group',
@@ -225,6 +183,7 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
   <VerticalNavLink
+    v-if="can('read role')"
     :item="{
       title: 'Peran & Izin',
       icon: 'bx-shield',
@@ -240,6 +199,7 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
   <VerticalNavLink
+    v-if="can('read job')"
     :item="{
       title: 'Bursa Kerja',
       icon: 'bx-store',
@@ -248,6 +208,7 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
     <VerticalNavLink
+    v-if="can('read leaderboard')"
     :item="{
       title: 'Peringkat',
       icon: 'bx-chart',
@@ -257,12 +218,14 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
 
   <!-- 👉 Personal Activity -->
   <VerticalNavSectionTitle
+    v-if="can('read posted_jobs') || can('read my_jobs') || can('read wallet')" 
     :item="{
       heading: 'Aktivitas Saya',
     }"
   />
 
   <VerticalNavLink
+    v-if="can('read posted_jobs')"
     :item="{
       title: 'Pekerjaan Saya',
       icon: 'bx-list-plus',
@@ -271,6 +234,7 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
   <VerticalNavLink
+    v-if="can('read my_jobs')"
     :item="{
       title: 'Pekerjaan Diambil',
       icon: 'bx-task',
@@ -279,10 +243,38 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
   <VerticalNavLink
+    v-if="can('read wallet')"
     :item="{
       title: 'Dompet Saya',
       icon: 'bx-wallet',
       to: '/wallet',
+    }"
+  />
+
+  <VerticalNavLink
+    v-if="can('create topup')"
+    :item="{
+      title: 'Top Up Saldo',
+      icon: 'bx-money',
+      to: '/topup',
+    }"
+  />
+
+  <VerticalNavLink
+    v-if="can('read admin_topup')"
+    :item="{
+      title: 'Verifikasi Top Up',
+      icon: 'bx-check-shield',
+      to: '/admin/topup',
+    }"
+  />
+
+  <VerticalNavLink
+    v-if="can('read feedback')"
+    :item="{
+      title: 'Feedback',
+      icon: 'bx-message-square-dots',
+      to: '/feedback',
     }"
   />
 

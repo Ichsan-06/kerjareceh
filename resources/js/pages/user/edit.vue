@@ -11,9 +11,20 @@ const form = ref({
   name: '',
   email: '',
   password: '',
+  role: null,
 });
 
+const roles = ref([]);
 const errors = ref({});
+
+const fetchRoles = async () => {
+    try {
+        const response = await axios.get('/api/roles');
+        roles.value = response.data;
+    } catch (error) {
+        console.error('Error fetching roles:', error);
+    }
+};
 
 const fetchUser = async () => {
   try {
@@ -21,6 +32,9 @@ const fetchUser = async () => {
     const user = response.data;
     form.value.name = user.name;
     form.value.email = user.email;
+    if (user.roles && user.roles.length > 0) {
+        form.value.role = user.roles[0].name;
+    }
     // Password is left empty intentionally
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -42,19 +56,20 @@ const submit = async () => {
 };
 
 onMounted(() => {
+  fetchRoles();
   fetchUser();
 });
 </script>
 
 <template>
-  <VCard title="Edit User">
+  <VCard title="Edit Pengguna">
     <VCardText>
       <VForm @submit.prevent="submit">
         <VRow>
           <VCol cols="12">
             <VTextField
               v-model="form.name"
-              label="Name"
+              label="Nama"
               :error-messages="errors.name"
               required
             />
@@ -68,10 +83,21 @@ onMounted(() => {
               required
             />
           </VCol>
+           <VCol cols="12">
+            <VSelect
+              v-model="form.role"
+              :items="roles"
+              item-title="name"
+              item-value="name"
+              label="Peran / Role"
+              :error-messages="errors.role"
+              required
+            />
+          </VCol>
           <VCol cols="12">
             <VTextField
               v-model="form.password"
-              label="Password (Leave blank to keep current)"
+              label="Password (Biarkan kosong jika tidak ingin mengubah)"
               type="password"
               :error-messages="errors.password"
             />
@@ -84,7 +110,7 @@ onMounted(() => {
               variant="tonal"
               to="/users"
             >
-              Cancel
+              Batal
             </VBtn>
           </VCol>
         </VRow>

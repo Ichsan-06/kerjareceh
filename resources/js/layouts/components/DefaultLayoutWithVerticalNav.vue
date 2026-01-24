@@ -1,10 +1,11 @@
 <script setup>
+import Footer from '@/layouts/components/Footer.vue'
+import NavBarNotifications from '@/layouts/components/NavBarNotifications.vue'
+import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import NavItems from '@/layouts/components/NavItems.vue'
+import UserProfile from '@/layouts/components/UserProfile.vue'
 import logo from '@images/logo.svg?raw'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
-import Footer from '@/layouts/components/Footer.vue'
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import UserProfile from '@/layouts/components/UserProfile.vue'
 </script>
 
 <template>
@@ -38,20 +39,9 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
 
         <VSpacer />
 
-        <IconBtn
-          href="https://github.com/themeselection/sneat-vuetify-vuejs-laravel-admin-template-free"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <VIcon icon="bxl-github" />
-        </IconBtn>
-
-        <IconBtn>
-          <VIcon icon="bx-bell" />
-        </IconBtn>
-
+        <NavBarNotifications class="me-2" />
         <NavbarThemeSwitcher class="me-1" />
-
+        
         <UserProfile />
       </div>
     </template>

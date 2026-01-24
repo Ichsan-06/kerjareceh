@@ -22,6 +22,8 @@ const login = async () => {
     const response = await axios.post('/api/auth/login', form.value)
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
+    localStorage.setItem('permissions', JSON.stringify(response.data.permissions))
+
     router.push('/')
   } catch (error) {
     console.error('Login failed:', error)

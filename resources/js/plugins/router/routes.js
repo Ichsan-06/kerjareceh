@@ -61,6 +61,18 @@ export const routes = [
         component: () => import('@/pages/leaderboard/index.vue'),
       },
       {
+        path: 'topup',
+        component: () => import('@/pages/topup/index.vue'),
+      },
+      {
+        path: 'admin/topup',
+        component: () => import('@/pages/admin/topup/index.vue'),
+      },
+      {
+        path: 'feedback',
+        component: () => import('@/pages/feedback/index.vue'),
+      },
+      {
         path: 'typography',
         component: () => import('@/pages/typography.vue'),
       },

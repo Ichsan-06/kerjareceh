@@ -1,7 +1,6 @@
 <script setup>
 import axios from '@/plugins/axios';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import avatar1 from '@images/avatars/avatar-1.png'; // Placeholder avatar
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -329,8 +328,9 @@ const postComment = async () => {
                 <VCard class="mb-6">
                     <VCardItem>
                         <template #prepend>
-                            <VAvatar size="48" class="me-3">
-                                <VImg :src="avatar1" />
+                            <VAvatar size="48" class="me-3" :variant="!job.provider?.avatar ? 'tonal' : undefined" color="primary">
+                                <VImg v-if="job.provider?.avatar" :src="`/storage/${job.provider.avatar}`" />
+                                <span v-else class="text-h6">{{ job.provider?.name?.charAt(0) }}</span>
                             </VAvatar>
                         </template>
                          <VCardTitle class="text-h5">
@@ -460,8 +460,9 @@ const postComment = async () => {
                         </div>
                         <div v-else-if="comments.length > 0" class="mb-4" style="max-height: 300px; overflow-y: auto;">
                             <div v-for="comment in comments" :key="comment.id" class="d-flex gap-3 mb-3">
-                                <VAvatar size="32" color="secondary" variant="tonal">
-                                    {{ comment.user.name.charAt(0) }}
+                                <VAvatar size="32" color="secondary" :variant="!comment.user.avatar ? 'tonal' : undefined">
+                                    <VImg v-if="comment.user.avatar" :src="`/storage/${comment.user.avatar}`" />
+                                    <span v-else>{{ comment.user.name.charAt(0) }}</span>
                                 </VAvatar>
                                 <div class="bg-grey-100 pa-2 rounded flex-grow-1">
                                     <div class="d-flex justify-space-between align-center">
