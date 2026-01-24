@@ -57,6 +57,10 @@ export const routes = [
         component: () => import('@/pages/wallet/index.vue'),
       },
       {
+        path: 'leaderboard',
+        component: () => import('@/pages/leaderboard/index.vue'),
+      },
+      {
         path: 'typography',
         component: () => import('@/pages/typography.vue'),
       },

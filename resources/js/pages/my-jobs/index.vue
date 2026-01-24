@@ -1,16 +1,17 @@
 <script setup>
 import axios from '@/plugins/axios';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import { onMounted, ref } from 'vue';
 
 const slots = ref([]);
 const loading = ref(false);
 
 const headers = [
-  { title: 'Job Title', key: 'job.title' },
-  { title: 'Reward', key: 'job.reward_per_worker' },
+  { title: 'Judul Pekerjaan', key: 'job.title' },
+  { title: 'Bayaran', key: 'job.reward_per_worker' },
   { title: 'Status', key: 'status' },
-  { title: 'Taken At', key: 'created_at' },
-  { title: 'Actions', key: 'actions', sortable: false },
+  { title: 'Diambil Pada', key: 'created_at' },
+  { title: 'Aksi', key: 'actions', sortable: false },
 ];
 
 const fetchMyJobs = async () => {
@@ -35,13 +36,6 @@ const resolveStatusVariant = (status) => {
     return 'default';
 };
 
-const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-};
-
 onMounted(() => {
   fetchMyJobs();
 });
@@ -50,8 +44,8 @@ onMounted(() => {
 <template>
   <VContainer>
     <div class="d-flex justify-space-between align-center mb-6">
-       <h2 class="text-h4">My Jobs</h2>
-       <VBtn to="/jobs" prepend-icon="bx-plus">Find More Jobs</VBtn>
+       <h2 class="text-h4">Pekerjaan Diambil</h2>
+       <VBtn to="/jobs" prepend-icon="bx-plus">Cari Pekerjaan Lain</VBtn>
     </div>
 
     <VCard>
@@ -69,7 +63,7 @@ onMounted(() => {
             </template>
 
             <template #item.job.reward_per_worker="{ item }">
-                <span class="text-success font-weight-medium">${{ item.job?.reward_per_worker }}</span>
+                <span class="text-success font-weight-medium">{{ formatCurrency(item.job?.reward_per_worker) }}</span>
             </template>
 
             <template #item.status="{ item }">
@@ -100,7 +94,7 @@ onMounted(() => {
             
             <template #no-data>
                 <div class="text-center pa-4">
-                    <p class="text-medium-emphasis">You haven't taken any jobs yet.</p>
+                    <p class="text-medium-emphasis">Anda belum mengambil pekerjaan apapun.</p>
                 </div>
             </template>
         </VDataTable>

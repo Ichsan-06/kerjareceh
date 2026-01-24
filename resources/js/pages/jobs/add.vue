@@ -1,5 +1,6 @@
 <script setup>
 import axios from '@/plugins/axios';
+import { formatCurrency } from '@/utils/formatters';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -19,9 +20,9 @@ const form = ref({
 
 const calculatedReward = computed(() => {
     if (form.value.total_slot > 0 && form.value.total_budget > 0) {
-        return (form.value.total_budget / form.value.total_slot).toFixed(2);
+        return formatCurrency(form.value.total_budget / form.value.total_slot);
     }
-    return '0.00';
+    return 'Rp 0';
 });
 
 const fetchJobTypes = async () => {
@@ -39,7 +40,7 @@ const submit = async () => {
     router.push('/jobs');
   } catch (error) {
     console.error('Error creating job:', error);
-    alert('Failed to create job');
+    alert('Gagal membuat pekerjaan');
   }
 };
 
@@ -49,14 +50,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <VCard title="Post New Job">
+  <VCard title="Pasang Pekerjaan Baru">
     <VCardText>
       <VForm v-model="valid" @submit.prevent="submit">
         <VRow>
           <VCol cols="12" md="6">
             <VTextField
               v-model="form.title"
-              label="Job Title"
+              label="Judul Pekerjaan"
               required
             />
           </VCol>
@@ -67,7 +68,7 @@ onMounted(() => {
               :items="jobTypes"
               item-title="name"
               item-value="id"
-              label="Job Type"
+              label="Tipe Pekerjaan"
               required
             />
           </VCol>
@@ -75,7 +76,7 @@ onMounted(() => {
           <VCol cols="12">
             <VTextarea
               v-model="form.description"
-              label="Description"
+              label="Deskripsi"
               rows="3"
             />
           </VCol>
@@ -83,10 +84,10 @@ onMounted(() => {
           <VCol cols="12" md="4">
             <VTextField
               :model-value="calculatedReward"
-              label="Reward per Worker ($)"
+              label="Bayaran per Pekerja"
               readonly
               variant="filled"
-              hint="Auto-calculated from Budget / Slots"
+              hint="Dihitung otomatis dari Anggaran / Slot"
               persistent-hint
             />
           </VCol>
@@ -94,7 +95,7 @@ onMounted(() => {
           <VCol cols="12" md="4">
             <VTextField
               v-model="form.total_budget"
-              label="Total Budget ($)"
+              label="Total Anggaran"
               type="number"
               min="0"
               required
@@ -104,7 +105,7 @@ onMounted(() => {
           <VCol cols="12" md="4">
             <VTextField
               v-model="form.total_slot"
-              label="Total Slots"
+              label="Total Slot"
               type="number"
               min="1"
               required
@@ -114,7 +115,7 @@ onMounted(() => {
            <VCol cols="12" md="6">
             <VTextField
               v-model="form.start_at"
-              label="Start Date"
+              label="Tanggal Mulai"
               type="datetime-local"
               label-visible
             />
@@ -123,15 +124,15 @@ onMounted(() => {
            <VCol cols="12" md="6">
             <VTextField
               v-model="form.end_at"
-              label="End Date"
+              label="Tanggal Selesai (Deadline)"
               type="datetime-local"
               label-visible
             />
           </VCol>
 
           <VCol cols="12" class="d-flex gap-4">
-            <VBtn type="submit" color="primary">Submit</VBtn>
-            <VBtn variant="tonal" color="secondary" to="/jobs">Cancel</VBtn>
+            <VBtn type="submit" color="primary">Kirim</VBtn>
+            <VBtn variant="tonal" color="secondary" to="/jobs">Batal</VBtn>
           </VCol>
         </VRow>
       </VForm>

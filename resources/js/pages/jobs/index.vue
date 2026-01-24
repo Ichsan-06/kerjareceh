@@ -1,5 +1,6 @@
 <script setup>
 import axios from '@/plugins/axios';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import avatar1 from '@images/avatars/avatar-1.png'; // Placeholder avatar
 import { onMounted, ref } from 'vue';
 
@@ -19,7 +20,7 @@ const fetchJobs = async () => {
 };
 
 const deleteJob = async (id) => {
-  if (!confirm('Are you sure you want to delete this job?')) return;
+  if (!confirm('Apakah anda yakin ingin menghapus pekerjaan ini?')) return;
   try {
     await axios.delete(`/api/jobs/${id}`);
     fetchJobs();
@@ -36,11 +37,45 @@ const resolveStatusVariant = (status) => {
   return 'primary';
 };
 
-const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
+// Comments Logic
+const toggleComments = async (jobId) => {
+    const job = jobs.value.find(j => j.id === jobId);
+    if (!job) return;
+
+    job.commentOpen = !job.commentOpen;
+
+    if (job.commentOpen && !job.commentsLoaded) {
+        job.commentsLoading = true;
+        try {
+            const response = await axios.get(`/api/jobs/${jobId}/comments`);
+            job.comments = response.data;
+            job.commentsLoaded = true;
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+        } finally {
+            job.commentsLoading = false;
+        }
+    }
+};
+
+const postComment = async (job) => {
+    if (!job.newComment || job.newComment.trim() === '') return;
+
+    job.postingComment = true;
+    try {
+        const response = await axios.post('/api/comments', {
+            job_id: job.id,
+            content: job.newComment
+        });
+        
+        if (!job.comments) job.comments = [];
+        job.comments.unshift(response.data); // Add new comment to top
+        job.newComment = ''; // Clear input
+    } catch (error) {
+        console.error('Error posting comment:', error);
+    } finally {
+        job.postingComment = false;
+    }
 };
 
 onMounted(() => {
@@ -49,13 +84,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <VContainer>
+  <VContainer fluid>
     <VRow justify="center">
-      <VCol cols="12" md="8">
+      <VCol cols="12" md="10">
         <!-- Header / Actions -->
         <div class="d-flex justify-space-between align-center mb-6">
-          <h2 class="text-h4">Job Feed</h2>
-          <VBtn color="primary" to="/jobs/add" prepend-icon="bx-plus">Post Job</VBtn>
+          <h2 class="text-h4">Bursa Pekerjaan</h2>
+          <VBtn color="primary" to="/jobs/add" prepend-icon="bx-plus">Pasang Pekerjaan</VBtn>
         </div>
 
         <!-- Loading State -->
@@ -66,7 +101,7 @@ onMounted(() => {
         <!-- Empty State -->
         <div v-else-if="jobs.length === 0" class="text-center my-6 text-medium-emphasis">
           <VIcon icon="bx-briefcase" size="large" class="mb-2" />
-          <p>No jobs available yet.</p>
+          <p>Belum ada pekerjaan tersedia.</p>
         </div>
 
         <!-- Job Cards Feed -->
@@ -82,7 +117,7 @@ onMounted(() => {
               </template>
               <VCardTitle>{{ job.provider ? job.provider.name : 'Unknown Provider' }}</VCardTitle>
               <VCardSubtitle>
-                Posted on {{ formatDate(job.created_at) }}
+                Diposting pada {{ formatDate(job.created_at) }}
                 <VIcon icon="bx-globe" size="x-small" class="ms-1" />
               </VCardSubtitle>
               <template #append>
@@ -95,7 +130,7 @@ onMounted(() => {
                   </template>
                   <VList>
                     <VListItem :to="`/jobs/${job.id}/edit`" prepend-icon="bx-edit" title="Edit" />
-                    <VListItem @click="deleteJob(job.id)" prepend-icon="bx-trash" title="Delete" class="text-error" />
+                    <VListItem @click="deleteJob(job.id)" prepend-icon="bx-trash" title="Hapus" class="text-error" />
                   </VList>
                 </VMenu>
               </template>
@@ -110,17 +145,17 @@ onMounted(() => {
 
               <div class="d-flex flex-wrap gap-2 mb-4">
                  <VChip color="primary" variant="tonal" size="small" prepend-icon="bx-tag">
-                    {{ job.job_type ? job.job_type.name : 'General' }}
+                    {{ job.job_type ? job.job_type.name : 'Umum' }}
                  </VChip>
-                 <VChip color="success" variant="tonal" size="small" prepend-icon="bx-dollar">
-                    ${{ job.reward_per_worker }} / worker
+                 <VChip color="success" variant="tonal" size="small" prepend-icon="bx-money">
+                    {{ formatCurrency(job.reward_per_worker) }} / pekerja
                  </VChip>
               </div>
 
               <!-- Progress / Budget Info -->
                <VCard variant="flat" color="grey-100" class="pa-3 rounded">
                   <div class="d-flex justify-space-between text-caption mb-1">
-                      <span>Slots Taken</span>
+                      <span>Slot Terambil</span>
                       <span>{{ job.slot_taken }} / {{ job.total_slot }}</span>
                   </div>
                   <VProgressLinear
@@ -130,8 +165,8 @@ onMounted(() => {
                     rounded
                   />
                   <div class="d-flex justify-space-between text-caption mt-2 text-medium-emphasis">
-                      <span>Total Budget: ${{ job.total_budget }}</span>
-                      <span>Deadline: {{ formatDate(job.end_at) }}</span>
+                      <span>Total Anggaran: {{ formatCurrency(job.total_budget) }}</span>
+                      <span>Batas Waktu: {{ formatDate(job.end_at) }}</span>
                   </div>
                </VCard>
 
@@ -139,19 +174,60 @@ onMounted(() => {
 
             <VDivider />
 
-            <!-- Card Actions (Social style) -->
+
+            <!-- Card Actions -->
             <VCardActions>
-              <VBtn variant="text" color="medium-emphasis" prepend-icon="bx-heart">
-                  Like
-              </VBtn>
-               <VBtn variant="text" color="medium-emphasis" prepend-icon="bx-comment">
-                  Comment
+              <VBtn variant="text" color="medium-emphasis" prepend-icon="bx-comment" @click="toggleComments(job.id)">
+                  {{ job.commentOpen ? 'Sembunyikan Komentar' : 'Komentar' }}
               </VBtn>
               <VSpacer />
               <VBtn variant="tonal" color="primary" :to="`/jobs/${job.id}`">
-                  View Details
+                  Lihat Detail
               </VBtn>
             </VCardActions>
+
+            <!-- Comments Section (Expansion Panel) -->
+            <VExpandTransition>
+                <div v-if="job.commentOpen">
+                    <VDivider />
+                    <VCardText>
+                        <!-- List Comments -->
+                        <div v-if="job.commentsLoading" class="text-center">
+                            <VProgressCircular indeterminate size="24" color="primary" />
+                        </div>
+                        <div v-else-if="job.comments && job.comments.length > 0" class="mb-4">
+                            <div v-for="comment in job.comments" :key="comment.id" class="d-flex gap-3 mb-3">
+                                <VAvatar size="32" color="secondary" variant="tonal">
+                                    {{ comment.user.name.charAt(0) }}
+                                </VAvatar>
+                                <div class="bg-grey-100 pa-2 rounded flex-grow-1">
+                                    <div class="d-flex justify-space-between align-center">
+                                        <span class="text-subtitle-2 font-weight-bold">{{ comment.user.name }}</span>
+                                        <span class="text-caption text-medium-emphasis">{{ formatDate(comment.created_at) }}</span>
+                                    </div>
+                                    <p class="text-body-2 mb-0">{{ comment.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="text-center text-caption text-medium-emphasis mb-4">
+                            Belum ada komentar. Jadilah yang pertama!
+                        </div>
+
+                        <!-- Post Comment -->
+                        <div class="d-flex gap-2">
+                            <VTextField
+                                v-model="job.newComment"
+                                placeholder="Tulis komentar..."
+                                variant="outlined"
+                                density="compact"
+                                hide-details
+                                @keyup.enter="postComment(job)"
+                            />
+                            <VBtn icon="bx-send" variant="text" color="primary" :loading="job.postingComment" @click="postComment(job)" />
+                        </div>
+                    </VCardText>
+                </div>
+            </VExpandTransition>
           </VCard>
         </div>
 

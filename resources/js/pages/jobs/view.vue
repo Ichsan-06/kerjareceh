@@ -1,5 +1,6 @@
 <script setup>
 import axios from '@/plugins/axios';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import avatar1 from '@images/avatars/avatar-1.png'; // Placeholder avatar
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -205,12 +206,6 @@ const resolveSlotStatusVariant = (status) => {
     return 'default';
 };
 
-const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-};
 
 const isProvider = computed(() => {
     // Check various sources where user might be stored
@@ -245,7 +240,45 @@ onMounted(() => {
     }
     
     fetchJob();
+    fetchComments();
 });
+
+// Comments Logic
+const comments = ref([]);
+const commentsLoading = ref(false);
+const newComment = ref('');
+const postingComment = ref(false);
+
+const fetchComments = async () => {
+    commentsLoading.value = true;
+    try {
+        const response = await axios.get(`/api/jobs/${jobId}/comments`);
+        comments.value = response.data;
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+    } finally {
+        commentsLoading.value = false;
+    }
+};
+
+const postComment = async () => {
+    if (!newComment.value || newComment.value.trim() === '') return;
+
+    postingComment.value = true;
+    try {
+        const response = await axios.post('/api/comments', {
+            job_id: jobId,
+            content: newComment.value
+        });
+        
+        comments.value.unshift(response.data); // Add new comment to top
+        newComment.value = ''; // Clear input
+    } catch (error) {
+        console.error('Error posting comment:', error);
+    } finally {
+        postingComment.value = false;
+    }
+};
 </script>
 
 <template>
@@ -257,33 +290,33 @@ onMounted(() => {
     <div v-else-if="job">
         <!-- Back Button -->
         <VBtn variant="text" color="secondary" class="mb-4" to="/jobs" prepend-icon="bx-arrow-back">
-            Back to Feed
+            Kembali
         </VBtn>
 
         <!-- Status Alert for Worker -->
         <VAlert v-if="job.my_slot && !isProvider" :color="resolveSlotStatusVariant(mySlotStatus)" variant="tonal" class="mb-6" border="start">
             <div class="d-flex justify-space-between align-center">
                 <div>
-                    <strong>My Status: {{ mySlotStatus.toUpperCase() }}</strong>
+                    <strong>Status Saya: {{ mySlotStatus.toUpperCase() }}</strong>
                     <div v-if="mySlotStatus === 'reserved'">
-                        You have reserved this job. Please submit your proof before it expires.
+                        Anda telah memesan pekerjaan ini. Silakan kirim bukti sebelum habis masa berlakunya.
                     </div>
                     <div v-else-if="mySlotStatus === 'submitted'">
-                        Proof submitted. Waiting for approval.
+                        Bukti terkirim. Menunggu persetujuan.
                     </div>
                     <div v-else-if="mySlotStatus === 'rejected'">
-                        Your submission was rejected.
+                        Kiriman anda ditolak.
                     </div>
                      <div v-else-if="mySlotStatus === 'approved'">
-                        Congratulations! Your submission was approved.
+                        Selamat! Kiriman anda disetujui.
                     </div>
                 </div>
                 <div>
                      <VBtn v-if="mySlotStatus === 'reserved'" color="primary" @click="submissionDialog = true">
-                        Submit Proof
+                        Kirim Bukti
                     </VBtn>
                     <VBtn v-if="mySlotStatus === 'rejected'" color="error" variant="outlined" class="ms-2" @click="disputeDialog = true">
-                        Dispute
+                        Ajukan Banding
                     </VBtn>
                 </div>
                
@@ -304,7 +337,7 @@ onMounted(() => {
                             {{ job.title }}
                          </VCardTitle>
                          <VCardSubtitle>
-                            Posted by {{ job.provider ? job.provider.name : 'Unknown' }}
+                            Diposting oleh {{ job.provider ? job.provider.name : 'Unknown' }}
                          </VCardSubtitle>
                          <template #append>
                             <VChip :color="resolveStatusVariant(job.status)" label class="text-capitalize">
@@ -318,14 +351,14 @@ onMounted(() => {
                     <VCardText class="text-body-1 py-4">
                         <div class="d-flex gap-4 mb-6">
                              <VChip color="primary" variant="tonal" prepend-icon="bx-tag">
-                                {{ job.job_type ? job.job_type.name : 'General' }}
+                                {{ job.job_type ? job.job_type.name : 'Umum' }}
                              </VChip>
-                             <VChip color="success" variant="tonal" prepend-icon="bx-dollar">
-                                ${{ job.reward_per_worker }} / worker
+                             <VChip color="success" variant="tonal" prepend-icon="bx-money">
+                                {{ formatCurrency(job.reward_per_worker) }} / pekerja
                              </VChip>
                         </div>
 
-                        <h3 class="text-h6 font-weight-bold mb-2">Description</h3>
+                        <h3 class="text-h6 font-weight-bold mb-2">Deskripsi</h3>
                         <p style="white-space: pre-wrap;">{{ job.description }}</p>
                     </VCardText>
                 </VCard>
@@ -338,10 +371,10 @@ onMounted(() => {
                     <VTable v-else>
                         <thead>
                             <tr>
-                                <th>Worker</th>
+                                <th>Pekerja</th>
                                 <th>Status</th>
-                                <th>Proof</th>
-                                <th>Actions</th>
+                                <th>Bukti</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -385,14 +418,14 @@ onMounted(() => {
                                 </td>
                             </tr>
                             <tr v-if="providerSlots.length === 0">
-                                <td colspan="4" class="text-center text-medium-emphasis">No slots taken yet.</td>
+                                <td colspan="4" class="text-center text-medium-emphasis">Belum ada slot terambil.</td>
                             </tr>
                         </tbody>
                     </VTable>
                 </VCard>
 
                  <!-- Public: Participants List -->
-                <VCard v-else title="Who's working on this?" class="mb-6">
+                <VCard v-else title="Siapa yang mengerjakan ini?" class="mb-6">
                     <VCardText v-if="participantsLoading" class="text-center">
                         <VProgressCircular indeterminate size="24" />
                     </VCardText>
@@ -405,7 +438,7 @@ onMounted(() => {
                             </template>
                             <VListItemTitle>{{ participant.worker?.name || 'Unknown' }}</VListItemTitle>
                             <VListItemSubtitle class="text-caption">
-                                Joined {{ new Date(participant.created_at).toLocaleDateString() }}
+                                Bergabung {{ formatDate(participant.created_at) }}
                             </VListItemSubtitle>
                             <template #append>
                                 <VChip :color="resolveSlotStatusVariant(participant.status)" size="x-small" label class="text-capitalize">
@@ -414,32 +447,71 @@ onMounted(() => {
                             </template>
                         </VListItem>
                         <VListItem v-if="publicParticipants.length === 0">
-                            <VListItemTitle class="text-medium-emphasis text-center">Be the first to join!</VListItemTitle>
+                            <VListItemTitle class="text-medium-emphasis text-center">Jadilah yang pertama bergabung!</VListItemTitle>
                         </VListItem>
                     </VList>
+                </VCard>
+
+                <!-- Comments Section -->
+                <VCard title="Komentar & Pertanyaan" class="mt-6">
+                    <VCardText>
+                        <div v-if="commentsLoading" class="text-center my-2">
+                            <VProgressCircular indeterminate size="24" color="primary" />
+                        </div>
+                        <div v-else-if="comments.length > 0" class="mb-4" style="max-height: 300px; overflow-y: auto;">
+                            <div v-for="comment in comments" :key="comment.id" class="d-flex gap-3 mb-3">
+                                <VAvatar size="32" color="secondary" variant="tonal">
+                                    {{ comment.user.name.charAt(0) }}
+                                </VAvatar>
+                                <div class="bg-grey-100 pa-2 rounded flex-grow-1">
+                                    <div class="d-flex justify-space-between align-center">
+                                        <span class="text-subtitle-2 font-weight-bold">{{ comment.user.name }}</span>
+                                        <span class="text-caption text-medium-emphasis">{{ formatDate(comment.created_at) }}</span>
+                                    </div>
+                                    <p class="text-body-2 mb-0">{{ comment.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="text-center text-caption text-medium-emphasis mb-4">
+                            Belum ada komentar.
+                        </div>
+
+                        <!-- Post Comment -->
+                        <div class="d-flex gap-2">
+                            <VTextField
+                                v-model="newComment"
+                                placeholder="Tanya sesuatu..."
+                                variant="outlined"
+                                density="compact"
+                                hide-details
+                                @keyup.enter="postComment"
+                            />
+                            <VBtn icon="bx-send" variant="text" color="primary" :loading="postingComment" @click="postComment" />
+                        </div>
+                    </VCardText>
                 </VCard>
             </VCol>
 
             <!-- Sidebar Info -->
             <VCol cols="12" md="4">
-                <VCard title="Job Details" class="mb-6">
+                <VCard title="Detail Pekerjaan" class="mb-6">
                     <VCardText>
                          <VList density="compact">
                             <VListItem prepend-icon="bx-calendar">
-                                <VListItemTitle>Start Date</VListItemTitle>
+                                <VListItemTitle>Tanggal Mulai</VListItemTitle>
                                 <VListItemSubtitle>{{ formatDate(job.start_at) }}</VListItemSubtitle>
                             </VListItem>
                             <VListItem prepend-icon="bx-time">
-                                <VListItemTitle>Deadline</VListItemTitle>
+                                <VListItemTitle>Batas Waktu</VListItemTitle>
                                 <VListItemSubtitle>{{ formatDate(job.end_at) }}</VListItemSubtitle>
                             </VListItem>
                             <VListItem prepend-icon="bx-group">
-                                <VListItemTitle>Slots</VListItemTitle>
-                                <VListItemSubtitle>{{ job.slot_taken }} / {{ job.total_slot }} taken</VListItemSubtitle>
+                                <VListItemTitle>Slot</VListItemTitle>
+                                <VListItemSubtitle>{{ job.slot_taken }} / {{ job.total_slot }} terisi</VListItemSubtitle>
                             </VListItem>
                              <VListItem prepend-icon="bx-wallet">
-                                <VListItemTitle>Total Budget</VListItemTitle>
-                                <VListItemSubtitle>${{ job.total_budget }}</VListItemSubtitle>
+                                <VListItemTitle>Total Anggaran</VListItemTitle>
+                                <VListItemSubtitle>{{ formatCurrency(job.total_budget) }}</VListItemSubtitle>
                             </VListItem>
                         </VList>
                     </VCardText>
@@ -452,7 +524,7 @@ onMounted(() => {
                             :loading="actionLoading"
                             @click="takeJob"
                         >
-                            Take Job Now
+                            Ambil Pekerjaan
                         </VBtn>
                         <VBtn 
                             v-else-if="job.my_slot && !isProvider"
@@ -461,7 +533,7 @@ onMounted(() => {
                             variant="tonal"
                             disabled
                         >
-                            Job Taken
+                            Sudah Diambil
                         </VBtn>
                          <VBtn 
                             v-else-if="!isProvider"
@@ -470,7 +542,7 @@ onMounted(() => {
                             variant="tonal"
                             disabled
                         >
-                            Unavailable
+                            Tidak Tersedia
                         </VBtn>
                         <VBtn
                             v-else
@@ -479,18 +551,20 @@ onMounted(() => {
                             variant="tonal"
                             disabled
                         >
-                            You are the Provider
+                            Anda adalah Pemilik
                         </VBtn>
                     </VCardActions>
                 </VCard>
 
+
+
                 <VCard v-if="isProvider" title="Admin Actions" class="mt-4">
                     <VCardText class="d-flex flex-column gap-2">
                         <VBtn :to="`/jobs/${job.id}/edit`" prepend-icon="bx-edit" variant="tonal" color="primary" block>
-                            Edit Job
+                            Edit Pekerjaan
                         </VBtn>
                         <VBtn @click="deleteJob" prepend-icon="bx-trash" variant="tonal" color="error" block>
-                            Delete Job
+                            Hapus Pekerjaan
                         </VBtn>
                     </VCardText>
                 </VCard>
@@ -498,13 +572,13 @@ onMounted(() => {
         </VRow>
     </div>
      <div v-else class="text-center my-6">
-        <h3 class="text-h5 text-medium-emphasis">Job not found</h3>
-        <VBtn to="/jobs" color="primary" class="mt-4">Back to Jobs</VBtn>
+        <h3 class="text-h5 text-medium-emphasis">Pekerjaan tidak ditemukan</h3>
+        <VBtn to="/jobs" color="primary" class="mt-4">Kembali ke Daftar</VBtn>
      </div>
 
      <!-- Submission Dialog -->
      <VDialog v-model="submissionDialog" max-width="500">
-        <VCard title="Submit Proof">
+        <VCard title="Kirim Bukti">
             <VCardText>
                 <VFileInput 
                     v-model="screenshot" 
@@ -515,56 +589,56 @@ onMounted(() => {
                 />
                 <VTextarea 
                     v-model="submissionNote"
-                    label="Notes (Optional)"
+                    label="Catatan (Opsional)"
                     rows="3"
                     class="mt-3"
                 />
             </VCardText>
             <VCardActions>
                 <VSpacer />
-                <VBtn color="secondary" variant="text" @click="submissionDialog = false">Cancel</VBtn>
-                <VBtn color="primary" :loading="actionLoading" @click="submitProof">Submit</VBtn>
+                <VBtn color="secondary" variant="text" @click="submissionDialog = false">Batal</VBtn>
+                <VBtn color="primary" :loading="actionLoading" @click="submitProof">Kirim</VBtn>
             </VCardActions>
         </VCard>
      </VDialog>
 
       <!-- Dispute Dialog -->
      <VDialog v-model="disputeDialog" max-width="500">
-        <VCard title="Open Dispute">
+        <VCard title="Ajukan Banding">
             <VCardText>
-                <p class="text-body-2 mb-4">Please explain why you think this rejection is unfair.</p>
+                <p class="text-body-2 mb-4">Jelaskan mengapa menurut anda penolakan ini tidak adil.</p>
                 <VTextarea 
                     v-model="disputeReason"
-                    label="Reason"
+                    label="Alasan"
                     rows="4"
                 />
             </VCardText>
             <VCardActions>
                 <VSpacer />
-                <VBtn color="secondary" variant="text" @click="disputeDialog = false">Cancel</VBtn>
-                <VBtn color="error" :loading="actionLoading" @click="submitDispute">Submit Dispute</VBtn>
+                <VBtn color="secondary" variant="text" @click="disputeDialog = false">Batal</VBtn>
+                <VBtn color="error" :loading="actionLoading" @click="submitDispute">Kirim Banding</VBtn>
             </VCardActions>
         </VCard>
      </VDialog>
 
       <!-- Approval/Reject Dialog -->
      <VDialog v-model="approvalDialog" max-width="500">
-        <VCard :title="decision === 'approved' ? 'Approve Submission' : 'Reject Submission'">
+        <VCard :title="decision === 'approved' ? 'Setujui Pengajuan' : 'Tolak Pengajuan'">
             <VCardText>
                 <p class="text-body-2 mb-4">
-                    Are you sure you want to {{ decision }} this submission from {{ selectedSlot?.worker?.name }}?
+                    Apakah anda yakin ingin {{ decision === 'approved' ? 'menyetujui' : 'menolak' }} pengajuan dari {{ selectedSlot?.worker?.name }}?
                 </p>
                 <VTextarea 
                     v-model="decisionReason"
-                    label="Reason / Feedback (Optional)"
+                    label="Alasan / Umpan Balik (Opsional)"
                     rows="3"
                 />
             </VCardText>
             <VCardActions>
                 <VSpacer />
-                <VBtn color="secondary" variant="text" @click="approvalDialog = false">Cancel</VBtn>
+                <VBtn color="secondary" variant="text" @click="approvalDialog = false">Batal</VBtn>
                 <VBtn :color="decision === 'approved' ? 'success' : 'error'" :loading="actionLoading" @click="submitDecision">
-                    Confirm {{ decision === 'approved' ? 'Approval' : 'Rejection' }}
+                    Konfirmasi {{ decision === 'approved' ? 'Persetujuan' : 'Penolakan' }}
                 </VBtn>
             </VCardActions>
         </VCard>

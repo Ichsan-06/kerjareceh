@@ -1,18 +1,19 @@
 <script setup>
 import axios from '@/plugins/axios';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import { onMounted, ref } from 'vue';
 
 const jobs = ref([]);
 const loading = ref(false);
 
 const headers = [
-  { title: 'Title', key: 'title' },
-  { title: 'Type', key: 'job_type.name' },
-  { title: 'Budget', key: 'total_budget' },
-  { title: 'Progress', key: 'progress' },
+  { title: 'Judul', key: 'title' },
+  { title: 'Tipe', key: 'job_type.name' },
+  { title: 'Anggaran', key: 'total_budget' },
+  { title: 'Progres', key: 'progress' },
   { title: 'Status', key: 'status' },
-  { title: 'Created', key: 'created_at' },
-  { title: 'Actions', key: 'actions', sortable: false },
+  { title: 'Dibuat', key: 'created_at' },
+  { title: 'Aksi', key: 'actions', sortable: false },
 ];
 
 const fetchPostedJobs = async () => {
@@ -36,13 +37,6 @@ const resolveStatusVariant = (status) => {
     return 'primary';
 };
 
-const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-};
-
 onMounted(() => {
   fetchPostedJobs();
 });
@@ -51,8 +45,8 @@ onMounted(() => {
 <template>
   <VContainer>
     <div class="d-flex justify-space-between align-center mb-6">
-       <h2 class="text-h4">Posted Jobs</h2>
-       <VBtn to="/jobs/add" prepend-icon="bx-plus">Post New Job</VBtn>
+       <h2 class="text-h4">Pekerjaan Saya</h2>
+       <VBtn to="/jobs/add" prepend-icon="bx-plus">Buat Pekerjaan Baru</VBtn>
     </div>
 
     <VCard>
@@ -67,7 +61,7 @@ onMounted(() => {
             </template>
 
             <template #item.total_budget="{ item }">
-                <span class="text-success font-weight-medium">${{ item.total_budget }}</span>
+                <span class="text-success font-weight-medium">{{ formatCurrency(item.total_budget) }}</span>
             </template>
 
              <template #item.progress="{ item }">
@@ -119,7 +113,7 @@ onMounted(() => {
             
             <template #no-data>
                 <div class="text-center pa-4">
-                    <p class="text-medium-emphasis">You haven't posted any jobs yet.</p>
+                    <p class="text-medium-emphasis">Anda belum memposting pekerjaan apapun.</p>
                 </div>
             </template>
         </VDataTable>

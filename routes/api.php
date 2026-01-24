@@ -26,6 +26,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('jobs/take', [\App\Http\Controllers\JobSlotController::class, 'store']);
     Route::get('my-jobs', [\App\Http\Controllers\JobSlotController::class, 'index']);
+
+    // Comments
+    Route::get('jobs/{id}/comments', [\App\Http\Controllers\JobCommentController::class, 'index']);
+    Route::post('comments', [\App\Http\Controllers\JobCommentController::class, 'store']);
+
+    // Leaderboard
+    Route::get('leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index']);
+
     Route::get('jobs/{id}/slots', [\App\Http\Controllers\JobSlotController::class, 'getJobSlots']);
     Route::get('jobs/{id}/participants', [\App\Http\Controllers\JobSlotController::class, 'publicList']);
     Route::get('my-jobs/{id}', [\App\Http\Controllers\JobSlotController::class, 'show']);

@@ -1,15 +1,16 @@
 <script setup>
 import axios from '@/plugins/axios';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import { onMounted, ref } from 'vue';
 
 const wallet = ref(null);
 const loading = ref(false);
 
 const headers = [
-  { title: 'Date', key: 'created_at' },
-  { title: 'Type', key: 'type' },
-  { title: 'Amount', key: 'amount' },
-  { title: 'Reference', key: 'reference' },
+  { title: 'Tanggal', key: 'created_at' },
+  { title: 'Tipe', key: 'type' },
+  { title: 'Jumlah', key: 'amount' },
+  { title: 'Referensi', key: 'reference' },
 ];
 
 const fetchWallet = async () => {
@@ -31,16 +32,10 @@ const resolveTypeVariant = (type) => {
 };
 
 const formatAmount = (amount, type) => {
-    const value = parseFloat(amount).toFixed(2);
+    const value = formatCurrency(amount);
     const prefix = (type === 'payout' || type === 'lock') ? '-' : '+';
-    return `${prefix}$${value}`;
-};
-
-const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-    });
+    // Remove Rp prefix from value if it exists to formatting cleaner with +/-
+    return `${prefix} ${value}`;
 };
 
 onMounted(() => {
@@ -51,7 +46,7 @@ onMounted(() => {
 <template>
   <VContainer>
     <div class="d-flex justify-space-between align-center mb-6">
-       <h2 class="text-h4">My Wallet</h2>
+       <h2 class="text-h4">Dompet Saya</h2>
     </div>
 
     <div v-if="loading" class="text-center my-6">
@@ -64,12 +59,12 @@ onMounted(() => {
             <VCol cols="12" md="6">
                 <VCard class="mb-6 bg-primary text-white">
                     <VCardText>
-                        <div class="text-subtitle-1 mb-2">Available Balance</div>
-                        <h3 class="text-h3 font-weight-bold mb-4">${{ wallet.balance }}</h3>
+                        <div class="text-subtitle-1 mb-2">Saldo Tersedia</div>
+                        <h3 class="text-h3 font-weight-bold mb-4">{{ formatCurrency(wallet.balance) }}</h3>
                         <VDivider class="mb-4 border-opacity-25" />
                         <div class="d-flex justify-space-between">
-                            <span>Locked Balance</span>
-                            <span class="font-weight-medium">${{ wallet.locked_balance }}</span>
+                            <span>Saldo Tertahan</span>
+                            <span class="font-weight-medium">{{ formatCurrency(wallet.locked_balance) }}</span>
                         </div>
                     </VCardText>
                 </VCard>
@@ -77,7 +72,7 @@ onMounted(() => {
         </VRow>
         
         <!-- Transactions Table -->
-        <VCard title="Transaction History">
+        <VCard title="Riwayat Transaksi">
             <VDataTable
                 :headers="headers"
                 :items="wallet.transactions"
@@ -107,7 +102,7 @@ onMounted(() => {
 
                 <template #no-data>
                     <div class="text-center pa-4">
-                        <p class="text-medium-emphasis">No transactions yet.</p>
+                        <p class="text-medium-emphasis">Belum ada transaksi.</p>
                     </div>
                 </template>
             </VDataTable>

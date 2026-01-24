@@ -1,7 +1,7 @@
 <script setup>
-import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue';
 import VerticalNavGroup from '@layouts/components/VerticalNavGroup.vue';
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
+import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle.vue';
 </script>
 
 <template>
@@ -59,7 +59,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
   </VerticalNavGroup>
 
   <!-- 👉 Front Pages -->
-  <VerticalNavGroup
+  <!-- <VerticalNavGroup
     :item="{
       title: 'Front Pages',
       icon: 'bx-file',
@@ -102,10 +102,10 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
         target: '_blank',
       }"
     />
-  </VerticalNavGroup>
+  </VerticalNavGroup> -->
 
   <!-- 👉 Apps & Pages -->
-  <VerticalNavSectionTitle
+  <!-- <VerticalNavSectionTitle
     :item="{
       heading: 'Apps & Pages',
     }"
@@ -179,10 +179,10 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       icon: 'bx-info-circle',
       to: '/no-existence',
     }"
-  />
+  /> -->
 
   <!-- 👉 User Interface -->
-  <VerticalNavSectionTitle
+  <!-- <VerticalNavSectionTitle
     :item="{
       heading: 'User Interface',
     }"
@@ -207,12 +207,18 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       icon: 'bx-credit-card',
       to: '/cards',
     }"
+  /> -->
+
+  <!-- 👉 Users & Roles -->
+  <VerticalNavSectionTitle
+    :item="{
+      heading: 'Pengguna & Peran',
+    }"
   />
 
-  <!-- 👉 Users -->
   <VerticalNavLink
     :item="{
-      title: 'Users',
+      title: 'Pengguna',
       icon: 'bx-group',
       to: '/users',
     }"
@@ -220,23 +226,45 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
 
   <VerticalNavLink
     :item="{
-      title: 'Roles & Permissions',
+      title: 'Peran & Izin',
       icon: 'bx-shield',
       to: '/roles',
     }"
   />
 
-  <VerticalNavLink
+  <!-- 👉 Main Apps -->
+  <VerticalNavSectionTitle
     :item="{
-      title: 'Marketplace',
-      icon: 'bx-store',
-      to: '/jobs',
+      heading: 'Menu Utama',
     }"
   />
 
   <VerticalNavLink
     :item="{
-      title: 'Posted Jobs',
+      title: 'Bursa Kerja',
+      icon: 'bx-store',
+      to: '/jobs',
+    }"
+  />
+
+    <VerticalNavLink
+    :item="{
+      title: 'Peringkat',
+      icon: 'bx-chart',
+      to: '/leaderboard',
+    }"
+  />
+
+  <!-- 👉 Personal Activity -->
+  <VerticalNavSectionTitle
+    :item="{
+      heading: 'Aktivitas Saya',
+    }"
+  />
+
+  <VerticalNavLink
+    :item="{
+      title: 'Pekerjaan Saya',
       icon: 'bx-list-plus',
       to: '/posted-jobs',
     }"
@@ -244,7 +272,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
 
   <VerticalNavLink
     :item="{
-      title: 'Taken Jobs',
+      title: 'Pekerjaan Diambil',
       icon: 'bx-task',
       to: '/my-jobs',
     }"
@@ -252,14 +280,14 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
 
   <VerticalNavLink
     :item="{
-      title: 'My Wallet',
+      title: 'Dompet Saya',
       icon: 'bx-wallet',
       to: '/wallet',
     }"
   />
 
   <!-- 👉 Forms & Tables -->
-  <VerticalNavSectionTitle
+  <!-- <VerticalNavSectionTitle
     :item="{
       heading: 'Forms & Tables',
     }"
@@ -297,10 +325,10 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       icon: 'bx-table',
       to: '/tables',
     }"
-  />
+  /> -->
 
   <!-- 👉 Others -->
-  <VerticalNavSectionTitle
+  <!-- <VerticalNavSectionTitle
     :item="{
       heading: 'Others',
     }"
@@ -330,5 +358,5 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
       icon: 'bx-phone',
       target: '_blank',
     }"
-  />
+  /> -->
 </template>
