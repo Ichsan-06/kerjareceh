@@ -1,5 +1,38 @@
 <script setup>
+import axios from '@/plugins/axios'
 import avatar1 from '@images/avatars/avatar-1.png'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const userData = ref({ name: 'User', role: 'Member' })
+
+onMounted(() => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr)
+      userData.value = {
+        name: user.name || 'User',
+        role: 'Admin' // You might want to fetch role from API or user object
+      }
+    } catch (e) {
+      console.error('Error parsing user data', e)
+    }
+  }
+})
+
+const logout = async () => {
+  try {
+    await axios.post('/api/auth/logout')
+  } catch (error) {
+    console.error('Logout error', error)
+  } finally {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    router.push('/login')
+  }
+}
 </script>
 
 <template>
@@ -48,9 +81,9 @@ import avatar1 from '@images/avatars/avatar-1.png'
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{ userData.name }}
             </VListItemTitle>
-            <VListItemSubtitle>Admin</VListItemSubtitle>
+            <VListItemSubtitle>{{ userData.role }}</VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
@@ -110,7 +143,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem @click="logout">
             <template #prepend>
               <VIcon
                 class="me-2"

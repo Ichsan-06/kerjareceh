@@ -20,7 +20,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
         to: '/dashboard',
       }"
     />
-    <VerticalNavLink
+    <!-- <VerticalNavLink
       :item="{
         title: 'CRM',
         href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/dashboards/crm',
@@ -28,7 +28,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
         badgeContent: 'Pro',
         badgeClass: 'bg-light-primary text-primary',
       }"
-    />
+    /> -->
     <VerticalNavLink
       :item="{
         title: 'ECommerce',
@@ -213,8 +213,48 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
   <VerticalNavLink
     :item="{
       title: 'Users',
-      icon: 'bx-user',
+      icon: 'bx-group',
       to: '/users',
+    }"
+  />
+
+  <VerticalNavLink
+    :item="{
+      title: 'Roles & Permissions',
+      icon: 'bx-shield',
+      to: '/roles',
+    }"
+  />
+
+  <VerticalNavLink
+    :item="{
+      title: 'Marketplace',
+      icon: 'bx-store',
+      to: '/jobs',
+    }"
+  />
+
+  <VerticalNavLink
+    :item="{
+      title: 'Posted Jobs',
+      icon: 'bx-list-plus',
+      to: '/posted-jobs',
+    }"
+  />
+
+  <VerticalNavLink
+    :item="{
+      title: 'Taken Jobs',
+      icon: 'bx-task',
+      to: '/my-jobs',
+    }"
+  />
+
+  <VerticalNavLink
+    :item="{
+      title: 'My Wallet',
+      icon: 'bx-wallet',
+      to: '/wallet',
     }"
   />
 

@@ -1,6 +1,7 @@
-import { createApp } from 'vue'
 import App from '@/App.vue'
 import { registerPlugins } from '@core/utils/plugins'
+import { createApp } from 'vue'
+import './plugins/axios'
 
 // Styles
 import '@core-scss/template/index.scss'

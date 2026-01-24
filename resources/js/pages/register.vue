@@ -1,4 +1,5 @@
 <script setup>
+import axios from '@/plugins/axios'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import logo from '@images/logo.svg?raw'
 import authV1BottomShape from '@images/svg/auth-v1-bottom-shape.svg?url'
@@ -12,6 +13,19 @@ const form = ref({
 })
 
 const isPasswordVisible = ref(false)
+const router = useRouter()
+
+const register = async () => {
+  try {
+    const response = await axios.post('/api/auth/register', form.value)
+    localStorage.setItem('token', response.data.access_token)
+    localStorage.setItem('user', JSON.stringify(response.data.user))
+    router.push('/')
+  } catch (error) {
+    console.error('Registration failed:', error)
+    alert('Registration failed. Please try again.')
+  }
+}
 </script>
 
 <template>
@@ -61,7 +75,7 @@ const isPasswordVisible = ref(false)
         </VCardText>
 
         <VCardText>
-          <VForm @submit.prevent="$router.push('/')">
+          <VForm @submit.prevent="register">
             <VRow>
               <!-- Username -->
               <VCol cols="12">

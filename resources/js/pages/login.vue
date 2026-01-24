@@ -4,6 +4,10 @@ import logo from '@images/logo.svg?raw'
 import authV1BottomShape from '@images/svg/auth-v1-bottom-shape.svg?url'
 import authV1TopShape from '@images/svg/auth-v1-top-shape.svg?url'
 
+import axios from '@/plugins/axios'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 const form = ref({
   email: '',
   password: '',
@@ -11,6 +15,19 @@ const form = ref({
 })
 
 const isPasswordVisible = ref(false)
+const router = useRouter()
+
+const login = async () => {
+  try {
+    const response = await axios.post('/api/auth/login', form.value)
+    localStorage.setItem('token', response.data.access_token)
+    localStorage.setItem('user', JSON.stringify(response.data.user))
+    router.push('/')
+  } catch (error) {
+    console.error('Login failed:', error)
+    alert('Login failed. Please check your credentials.')
+  }
+}
 </script>
 
 <template>
@@ -60,7 +77,7 @@ const isPasswordVisible = ref(false)
         </VCardText>
 
         <VCardText>
-          <VForm @submit.prevent="$router.push('/')">
+          <VForm @submit.prevent="login">
             <VRow>
               <!-- email -->
               <VCol cols="12">
