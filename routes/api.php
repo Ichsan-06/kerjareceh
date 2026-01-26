@@ -10,6 +10,11 @@ Route::prefix('auth')->group(function () {
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');
 });
 
+Route::get('/landing-stats', [App\Http\Controllers\LandingController::class, 'index']);
+Route::post('/donations', [App\Http\Controllers\DonationController::class, 'store']);
+Route::get('/donations', [App\Http\Controllers\DonationController::class, 'index']);
+Route::get('/donations/{refId}/check', [App\Http\Controllers\DonationController::class, 'checkStatus']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -21,12 +26,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('job-types', [\App\Http\Controllers\JobController::class, 'types']);
     Route::get('posted-jobs', [\App\Http\Controllers\JobController::class, 'postedJobs']);
     Route::apiResource('jobs', \App\Http\Controllers\JobController::class);
+    Route::post('jobs/{id}/cancel', [\App\Http\Controllers\JobController::class, 'cancel']);
 
     Route::get('wallet', [\App\Http\Controllers\WalletController::class, 'index']);
     Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
 
     Route::post('jobs/take', [\App\Http\Controllers\JobSlotController::class, 'store']);
     Route::get('my-jobs', [\App\Http\Controllers\JobSlotController::class, 'index']);
+
+    // Job Submission (Worker Proof)
+    Route::post('submissions', [\App\Http\Controllers\JobSubmissionController::class, 'store']);
 
     // Comments
     Route::get('jobs/{id}/comments', [\App\Http\Controllers\JobCommentController::class, 'index']);
@@ -52,7 +61,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
     Route::post('notifications/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
 
-    Route::post('profile', [\App\Http\Controllers\ProfileController::class, 'update']);
     Route::post('profile', [\App\Http\Controllers\ProfileController::class, 'update']);
     Route::post('profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword']);
 

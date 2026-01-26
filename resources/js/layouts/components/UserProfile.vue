@@ -12,6 +12,7 @@ const fetchUser = async () => {
         const response = await axios.get('/api/user');
         const user = response.data;
         userData.value = {
+            id: user.id,
             name: user.name,
             role: 'Member', // Or fetch role
             avatar: user.avatar ? `/storage/${user.avatar}` : avatar1

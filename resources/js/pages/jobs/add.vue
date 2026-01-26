@@ -40,7 +40,7 @@ const submit = async () => {
     router.push('/jobs');
   } catch (error) {
     console.error('Error creating job:', error);
-    alert('Gagal membuat pekerjaan');
+    alert(error.response.data.message);
   }
 };
 

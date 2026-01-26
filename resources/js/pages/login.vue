@@ -26,8 +26,7 @@ const login = async () => {
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
     localStorage.setItem('permissions', JSON.stringify(response.data.permissions))
-
-    router.push('/')
+    router.push('/dashboard')
   } catch (error) {
     console.error('Login failed:', error)
     alert('Login gagal. Silakan periksa kredensial Anda.')
@@ -83,7 +82,7 @@ const login = async () => {
           </div>
 
           <h5 class="text-h5 mb-1">
-            Selamat Datang di <span class="text-primary">Sneat</span>! 👋🏻
+            Selamat Datang di <span class="text-primary">KerjaReceh</span>! 👋🏻
           </h5>
           <p class="mb-0">
             Silakan masuk ke akun Anda dan mulai petualangan
@@ -139,6 +138,19 @@ const login = async () => {
                 >
                   Masuk
                 </VBtn>
+                
+                <p class="text-center mt-5">
+                    <span>New on our platform? </span>
+                    <RouterLink class="text-primary" to="/register">
+                      Create an account
+                    </RouterLink>
+                </p>
+                <div class="text-center mt-2">
+                    <RouterLink class="text-secondary text-caption" to="/">
+                      <VIcon icon="bx-arrow-back" start size="small"/>
+                      Kembali ke Beranda
+                    </RouterLink>
+                </div>
               </VCol>
             </VRow>
           </VForm>

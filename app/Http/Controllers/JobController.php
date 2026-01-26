@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
+    protected $walletService;
+
+    public function __construct(\App\Services\WalletService $walletService)
+    {
+        $this->walletService = $walletService;
+    }
+
     public function index()
     {
         $jobs = Job::with(['provider', 'jobType'])->latest()->paginate(10);
@@ -65,7 +72,7 @@ class JobController extends Controller
                 $wallet = $user->wallet()->firstOrCreate([]);
 
                 if ($wallet->balance < $totalBudget) {
-                    return response()->json(['message' => 'Insufficient wallet balance.'], 402);
+                    return response()->json(['message' => 'Maaf Saldo anda tidak mencukupi untuk membuat pekerjaan ini. Silahkan top up saldo anda terlebih dahulu.'], 402);
                 }
 
                 // 2. Create Job
@@ -117,5 +124,35 @@ class JobController extends Controller
     {
         $job->delete();
         return response()->json(null, 204);
+    }
+
+    public function cancel($id)
+    {
+        $job = Job::with('slots')->findOrFail($id);
+
+        if ($job->provider_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($job->status !== 'active') {
+            return response()->json(['message' => 'Only active jobs can be cancelled'], 400);
+        }
+
+        try {
+            $this->walletService->refundRemainingJobLock($job);
+            $job->status = 'cancelled';
+            $job->save();
+
+            foreach ($job->slots as $slot) {
+                if ($slot->status === 'reserved') {
+                    $slot->status = 'cancelled';
+                    $slot->save();
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+
+        return response()->json(['message' => 'Job cancelled successfully', 'job' => $job]);
     }
 }

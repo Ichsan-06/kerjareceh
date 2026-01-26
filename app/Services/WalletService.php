@@ -308,4 +308,79 @@ class WalletService
             return true;
         });
     }
+
+    /**
+     * Refund remaining frozen funds for a Job (Cancellation).
+     */
+    public function refundRemainingJobLock($job)
+    {
+        return DB::transaction(function () use ($job) {
+            // Find the generic job lock
+            $jobLock = WalletLock::where('job_id', $job->id)
+                ->whereNull('job_slot_id')
+                ->where('status', 'locked')
+                ->first();
+
+            if ($jobLock) {
+                // Return funds to provider wallet
+                $wallet = Wallet::find($jobLock->wallet_id);
+                $amount = $jobLock->amount;
+
+                if ($amount > 0) {
+                    $wallet->locked_balance -= $amount;
+                    $wallet->balance += $amount; // Return to available balance
+                    $wallet->save();
+
+                    // Transaction Record
+                    WalletTransaction::create([
+                        'wallet_id' => $wallet->id,
+                        'type' => 'refund',
+                        'amount' => $amount,
+                        'reference_type' => get_class($job),
+                        'reference_id' => $job->id,
+                    ]);
+                }
+
+                $jobLock->status = 'refunded';
+                $jobLock->amount = 0;
+                $jobLock->save();
+            }
+            // Also need to handle all "reserved" slots?
+            // Ideally cancel should only be possible if no active slots?
+            // Or cancel invalidates all reserved slots and refunds them too?
+            // For simplicity, let's assume Provider cancels remainder. 
+            // If there are reserved slots, they might have their own locks.
+
+            // Check for any slot locks that are strictly 'locked' (reserved but not paid)
+            // If we cancel the job, we should probably void these too.
+            $slotLocks = WalletLock::where('job_id', $job->id)
+                ->whereNotNull('job_slot_id')
+                ->where('status', 'locked')
+                ->get();
+
+            foreach ($slotLocks as $sLock) {
+                $wallet = Wallet::find($sLock->wallet_id);
+                $amount = $sLock->amount;
+
+                if ($amount > 0) {
+                    $wallet->locked_balance -= $amount;
+                    $wallet->balance += $amount;
+                    $wallet->save();
+
+                    WalletTransaction::create([
+                        'wallet_id' => $wallet->id,
+                        'type' => 'refund',
+                        'amount' => $amount,
+                        'reference_type' => get_class($job), // Or slot?
+                        'reference_id' => $job->id,
+                    ]);
+                }
+                $sLock->status = 'refunded';
+                $sLock->amount = 0;
+                $sLock->save();
+            }
+
+            return true;
+        });
+    }
 }

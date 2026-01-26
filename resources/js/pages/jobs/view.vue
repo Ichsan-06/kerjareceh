@@ -75,6 +75,21 @@ const fetchPublicParticipants = async () => {
     }
 };
 
+const cancelJob = async () => {
+  if (!confirm('Apakah anda yakin ingin membatalkan pekerjaan ini? Sisa dana yang terkunci akan dikembalikan ke saldo anda.')) return;
+  
+  loading.value = true;
+  try {
+    await axios.post(`/api/jobs/${jobId}/cancel`);
+    await fetchJob(); // Refresh to see status update
+  } catch (error) {
+    console.error('Error cancelling job:', error);
+    alert(error.response?.data?.message || 'Failed to cancel job');
+  } finally {
+    loading.value = false;
+  }
+};
+
 const deleteJob = async () => {
   if (!confirm('Are you sure you want to delete this job?')) return;
   try {
@@ -207,11 +222,9 @@ const resolveSlotStatusVariant = (status) => {
 
 
 const isProvider = computed(() => {
-    // Check various sources where user might be stored
-    // Note: Adjust 'userData' key based on actual login implementation
-    // Earlier login.vue snippet showed 'user' key, let's try that too
     const user = currentUser.value;
-    return job.value && user && job.value.provider_id === user.id;
+    // Ensure both IDs are compared as integers (or same type)
+    return job.value && user && parseInt(job.value.provider_id) === parseInt(user.id);
 });
 
 const canTakeJob = computed(() => {
@@ -228,14 +241,15 @@ const mySlotStatus = computed(() => {
 });
 
 onMounted(() => {
-    // Try to get user from multiple potential keys
-    const userData = localStorage.getItem('userData');
-    const user = localStorage.getItem('user');
+    // Correct key from login.vue is 'user'
+    const userStr = localStorage.getItem('user');
     
-    if (userData) {
-        currentUser.value = JSON.parse(userData);
-    } else if (user) {
-         currentUser.value = JSON.parse(user);
+    if (userStr) {
+        try {
+            currentUser.value = JSON.parse(userStr);
+        } catch (e) {
+            console.error('Error parsing user data', e);
+        }
     }
     
     fetchJob();
@@ -561,12 +575,15 @@ const postComment = async () => {
 
                 <VCard v-if="isProvider" title="Admin Actions" class="mt-4">
                     <VCardText class="d-flex flex-column gap-2">
-                        <VBtn :to="`/jobs/${job.id}/edit`" prepend-icon="bx-edit" variant="tonal" color="primary" block>
+                        <VBtn :to="`/jobs/${job.id}/edit`" prepend-icon="bx-edit" variant="tonal" color="primary" block v-if="job.status !== 'cancelled'">
                             Edit Pekerjaan
                         </VBtn>
-                        <VBtn @click="deleteJob" prepend-icon="bx-trash" variant="tonal" color="error" block>
-                            Hapus Pekerjaan
+                        <VBtn v-if="job.status === 'active'" @click="cancelJob" prepend-icon="bx-block" variant="tonal" color="warning" block>
+                            Batalkan Pekerjaan
                         </VBtn>
+                        <!-- <VBtn @click="deleteJob" prepend-icon="bx-trash" variant="tonal" color="error" block>
+                            Hapus Pekerjaan
+                        </VBtn> -->
                     </VCardText>
                 </VCard>
             </VCol>

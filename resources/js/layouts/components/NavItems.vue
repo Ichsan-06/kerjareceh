@@ -296,6 +296,14 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
     }"
   />
 
+  <VerticalNavLink
+    :item="{
+      title: 'Traktir Admin',
+      icon: 'bx-coffee-togo',
+      to: '/traktir',
+    }"
+  />
+
   <!-- 👉 Forms & Tables -->
   <!-- <VerticalNavSectionTitle
     :item="{

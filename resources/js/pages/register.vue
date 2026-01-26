@@ -1,9 +1,10 @@
 <script setup>
 import axios from '@/plugins/axios'
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
-import logo from '@images/logo.svg?raw'
-import authV1BottomShape from '@images/svg/auth-v1-bottom-shape.svg?url'
-import authV1TopShape from '@images/svg/auth-v1-top-shape.svg?url'
+import logo from '@images/logo2.png'
+import { default as authThemeMaskDark, default as authThemeMaskLight } from '@images/pages/1.png'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useTheme } from 'vuetify'
 
 const form = ref({
   username: '',
@@ -14,63 +15,82 @@ const form = ref({
 
 const isPasswordVisible = ref(false)
 const router = useRouter()
+const vuetifyTheme = useTheme()
+
+const authThemeMask = computed(() => {
+  return vuetifyTheme.global.name.value === 'light' ? authThemeMaskLight : authThemeMaskDark
+})
 
 const register = async () => {
   try {
     const response = await axios.post('/api/auth/register', form.value)
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
-    router.push('/')
+    localStorage.setItem('permissions', JSON.stringify(response.data.permissions))
+    
+    // Redirect to dashboard or home
+    router.push('/dashboard')
   } catch (error) {
     console.error('Registration failed:', error)
-    alert('Registration failed. Please try again.')
+    // Handle validation errors if present
+    const message = error.response?.data?.message || 'Registration failed. Please try again.'
+    alert(message)
   }
 }
 </script>
 
 <template>
-  <div class="auth-wrapper d-flex align-center justify-center pa-4">
-    <div class="position-relative my-sm-16">
-      <!-- 👉 Top shape -->
-      <VImg
-        :src="authV1TopShape"
-        class="text-primary auth-v1-top-shape d-none d-sm-block"
-      />
+  <VRow
+    no-gutters
+    class="auth-wrapper bg-surface"
+  >
+    <VCol
+      lg="8"
+      class="d-none d-lg-flex"
+    >
+      <div class="position-relative auth-bg rounded-lg w-100 ma-8 me-0">
+        <div class="d-flex align-center justify-center w-100 h-100">
+          <VImg
+            max-width="505"
+            :src="authThemeMask"
+            class="auth-illustration mt-16 mb-2"
+          />
+        </div>
 
-      <!-- 👉 Bottom shape -->
-      <VImg
-        :src="authV1BottomShape"
-        class="text-primary auth-v1-bottom-shape d-none d-sm-block"
-      />
+        <VImg
+          :src="logo"
+          alt="logo"
+          width="150"
+          class="auth-logo d-none d-lg-block"
+          style="position: absolute; top: 2rem; left: 2rem; z-index: 1;"
+        />
+      </div>
+    </VCol>
 
-      <!-- 👉 Auth card -->
+    <VCol
+      cols="12"
+      lg="4"
+      class="auth-card-v2 d-flex align-center justify-center"
+    >
       <VCard
-        class="auth-card"
-        max-width="460"
-        :class="$vuetify.display.smAndUp ? 'pa-6' : 'pa-0'"
+        flat
+        :max-width="500"
+        class="mt-12 mt-sm-0 pa-4"
       >
-        <VCardItem class="justify-center">
-          <RouterLink
-            to="/"
-            class="app-logo"
-          >
-            <!-- eslint-disable vue/no-v-html -->
-            <div
-              class="d-flex"
-              v-html="logo"
-            />
-            <h1 class="app-logo-title">
-              sneat
-            </h1>
-          </RouterLink>
-        </VCardItem>
-
         <VCardText>
-          <h4 class="text-h4 mb-1">
-            Adventure starts here 🚀
-          </h4>
+          <div class="d-flex d-lg-none align-center justify-center mb-6">
+             <VImg
+                :src="logo"
+                alt="logo"
+                width="120"
+              />
+          </div>
+
+          <h5 class="text-h5 mb-1">
+            Petualangan dimulai di sini 🚀
+          </h5>
           <p class="mb-0">
-            Make your app management easy and fun!
+            Jadikan manajemen aplikasi Anda mudah dan menyenangkan!
           </p>
         </VCardText>
 
@@ -100,7 +120,7 @@ const register = async () => {
               <VCol cols="12">
                 <VTextField
                   v-model="form.password"
-                  label="Password"
+                  label="Kata Sandi"
                   autocomplete="password"
                   placeholder="············"
                   :type="isPasswordVisible ? 'text' : 'password'"
@@ -118,19 +138,20 @@ const register = async () => {
                     for="privacy-policy"
                     style="opacity: 1;"
                   >
-                    <span class="me-1 text-high-emphasis">I agree to</span>
+                    <span class="me-1 text-high-emphasis">Saya setuju dengan</span>
                     <a
                       href="javascript:void(0)"
                       class="text-primary"
-                    >privacy policy & terms</a>
+                    >kebijakan privasi & ketentuan</a>
                   </VLabel>
                 </div>
 
                 <VBtn
                   block
                   type="submit"
+                  size="large"
                 >
-                  Sign up
+                  Daftar
                 </VBtn>
               </VCol>
 
@@ -139,39 +160,47 @@ const register = async () => {
                 cols="12"
                 class="text-center text-base"
               >
-                <span>Already have an account?</span>
+                <span>Sudah punya akun?</span>
                 <RouterLink
                   class="text-primary ms-1"
                   to="/login"
                 >
-                  Sign in instead
+                  Masuk di sini
                 </RouterLink>
               </VCol>
 
-              <VCol
+              <!-- <VCol
                 cols="12"
                 class="d-flex align-center"
               >
                 <VDivider />
                 <span class="mx-4">or</span>
                 <VDivider />
-              </VCol>
+              </VCol> -->
 
               <!-- auth providers -->
-              <VCol
+              <!-- <VCol
                 cols="12"
                 class="text-center"
               >
                 <AuthProvider />
-              </VCol>
+              </VCol> -->
             </VRow>
           </VForm>
         </VCardText>
       </VCard>
-    </div>
-  </div>
+    </VCol>
+  </VRow>
 </template>
 
 <style lang="scss">
-@use "@core-scss/template/pages/page-auth";
+@use "@core-scss/template/pages/page-auth.scss";
+
+.auth-wrapper {
+  min-height: 100vh;
+}
+
+.auth-bg {
+  background-color: rgb(var(--v-theme-background));
+}
 </style>

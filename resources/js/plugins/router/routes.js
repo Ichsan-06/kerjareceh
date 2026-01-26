@@ -1,5 +1,26 @@
 export const routes = [
-  { path: '/', redirect: '/dashboard' },
+  {
+    path: '/',
+    component: () => import('@/layouts/blank.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('@/pages/LandingPage.vue'),
+      },
+      {
+        path: 'login',
+        component: () => import('@/pages/login.vue'),
+      },
+      {
+        path: 'register',
+        component: () => import('@/pages/register.vue'),
+      },
+      {
+        path: '/:pathMatch(.*)*',
+        component: () => import('@/pages/[...error].vue'),
+      },
+    ],
+  },
   {
     path: '/',
     component: () => import('@/layouts/default.vue'),
@@ -81,6 +102,10 @@ export const routes = [
         component: () => import('@/pages/admin/withdraw/index.vue'),
       },
       {
+        path: 'traktir',
+        component: () => import('@/pages/traktir.vue'),
+      },
+      {
         path: 'typography',
         component: () => import('@/pages/typography.vue'),
       },
@@ -99,24 +124,6 @@ export const routes = [
       {
         path: 'form-layouts',
         component: () => import('@/pages/form-layouts.vue'),
-      },
-    ],
-  },
-  {
-    path: '/',
-    component: () => import('@/layouts/blank.vue'),
-    children: [
-      {
-        path: 'login',
-        component: () => import('@/pages/login.vue'),
-      },
-      {
-        path: 'register',
-        component: () => import('@/pages/register.vue'),
-      },
-      {
-        path: '/:pathMatch(.*)*',
-        component: () => import('@/pages/[...error].vue'),
       },
     ],
   },

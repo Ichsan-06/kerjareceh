@@ -22,11 +22,10 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
         </IconBtn>
 
         <!-- 👉 Search -->
-        <div
+        <!-- <div
           class="d-flex align-center cursor-pointer ms-lg-n3"
           style="user-select: none;"
         >
-          <!-- 👉 Search Trigger button -->
           <IconBtn>
             <VIcon icon="bx-search" />
           </IconBtn>
@@ -35,7 +34,7 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
             <span class="me-2">Search</span>
             <span class="meta-key">&#8984;K</span>
           </span>
-        </div>
+        </div> -->
 
         <VSpacer />
 
