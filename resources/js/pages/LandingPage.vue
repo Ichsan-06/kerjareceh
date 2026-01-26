@@ -445,10 +445,37 @@ const faqs = [
          </p>
     </VFooter>
 
+     <!-- WhatsApp Floating Button -->
+    <a
+      href="https://whatsapp.com/channel/0029Vb7PX815vKAD7nOIRB39"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="whatsapp-float d-flex align-center justify-center elevation-5"
+    >
+      <VIcon icon="bxl-whatsapp" size="40" color="white" />
+    </a>
+
   </div>
 </template>
 
 <style scoped lang="scss">
+.whatsapp-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  border-radius: 50%;
+  z-index: 1000;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4);
+  }
+}
+
 .line-height-1-2 {
     line-height: 1.2;
 }

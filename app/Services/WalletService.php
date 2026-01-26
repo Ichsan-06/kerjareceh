@@ -8,6 +8,7 @@ use App\Models\WalletLock;
 use App\Models\WalletTransaction;
 use App\Models\WithdrawRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class WalletService
 {
@@ -103,7 +104,7 @@ class WalletService
             $amount = $slot->reward_amount;
 
             $providerWallet = $provider->wallet;
-            $workerWallet = $worker->wallet()->firstOrCreate(['balance' => 0]);
+            $workerWallet = $worker->wallet()->firstOrCreate([], ['balance' => 0]);
 
             // Find the SPECIFIC lock for this slot
             $slotLock = WalletLock::where('job_slot_id', $slot->id)
@@ -208,7 +209,7 @@ class WalletService
     public static function creditTopUp($user, $amount, $ref)
     {
         return DB::transaction(function () use ($user, $amount, $ref) {
-            $wallet = $user->wallet()->firstOrCreate(['balance' => 0]);
+            $wallet = $user->wallet()->firstOrCreate([], ['balance' => 0]);
 
             $wallet->balance += $amount;
             $wallet->save();
