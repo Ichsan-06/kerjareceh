@@ -19,8 +19,8 @@ class JobSeeder extends Seeder
         // Ensure we have job types. If not, seed them (assuming JobTypeSeeder exists or manually create)
         if (JobType::count() == 0) {
             // Fallback if no job types exist
-            \App\Models\JobType::create(['name' => 'General']);
-            \App\Models\JobType::create(['name' => 'Social Media']);
+            \App\Models\JobType::create(['name' => 'General','slug'=>'general']);
+            \App\Models\JobType::create(['name' => 'Social Media','slug'=>'social-media']);
         }
 
         // Get existing users to be providers
