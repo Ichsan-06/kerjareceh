@@ -142,7 +142,13 @@ onMounted(() => {
                 <VCol cols="12">
                   <VAlert type="info" variant="tonal" class="mb-4">
                     Silakan transfer ke:<br>
-                    <b>BCA 1234567890 (a.n PT Recehan)</b><br>
+                    <b>BCA 6995110192 (a.n M Ichsan)</b><br>
+                    Total Bayar: <b>{{ formatCurrency(form.amount) }}</b>
+                  </VAlert>
+
+                  <VAlert type="danger" variant="tonal" class="mb-4">
+                    Silakan transfer ke:<br>
+                    <b>GOPAY 085173476478 (a.n M Ichsan)</b><br>
                     Total Bayar: <b>{{ formatCurrency(form.amount) }}</b>
                   </VAlert>
                   <VBtn
