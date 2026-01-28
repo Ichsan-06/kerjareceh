@@ -26,34 +26,35 @@ const errorMessage = ref('')
 
 // Fetch User Data
 const fetchUser = async () => {
-    try {
-        const response = await axios.get('/api/user');
-        const user = response.data;
-        accountDataLocal.value.firstName = user.name; // Simulating First/Last name split or just one field
-        accountDataLocal.value.email = user.email;
-        if (user.avatar) {
-             // accountDataLocal.value.avatarImg = '/storage/' + user.avatar; // Adjust based on storage
-             // Or if using full URL
-             accountDataLocal.value.avatarImg = user.avatar_url || avatar1; 
-        }
-    } catch (error) {
-        console.error('Error fetching user:', error);
+  try {
+    const response = await axios.get('/api/user')
+    const user = response.data
+
+    accountDataLocal.value.firstName = user.name // Simulating First/Last name split or just one field
+    accountDataLocal.value.email = user.email
+    if (user.avatar) {
+      // accountDataLocal.value.avatarImg = '/storage/' + user.avatar; // Adjust based on storage
+      // Or if using full URL
+      accountDataLocal.value.avatarImg = user.avatar_url || avatar1 
     }
+  } catch (error) {
+    console.error('Error fetching user:', error)
+  }
 }
 
 onMounted(() => {
-    fetchUser();
+  fetchUser()
 })
 
 const resetForm = () => {
-  fetchUser();
+  fetchUser()
 }
 
 const changeAvatar = file => {
   const fileReader = new FileReader()
   const { files } = file.target
   if (files && files.length) {
-    avatarFile.value = files[0];
+    avatarFile.value = files[0]
     fileReader.readAsDataURL(files[0])
     fileReader.onload = () => {
       if (typeof fileReader.result === 'string')
@@ -65,29 +66,31 @@ const changeAvatar = file => {
 // reset avatar image
 const resetAvatar = () => {
   accountDataLocal.value.avatarImg = avatar1
-  avatarFile.value = null;
+  avatarFile.value = null
 }
 
 const submitProfile = async () => {
-    const formData = new FormData();
-    formData.append('name', accountDataLocal.value.firstName); // Using firstName as Full Name for now as DB has 'name'
-    formData.append('email', accountDataLocal.value.email);
-    
-    if (avatarFile.value) {
-        formData.append('avatar', avatarFile.value);
-    }
+  const formData = new FormData()
 
-    try {
-        const response = await axios.post('/api/profile', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        successMessage.value = 'Profile updated successfully!';
-        errorMessage.value = '';
-    } catch (error) {
-        console.error(error);
-        errorMessage.value = error.response?.data?.message || 'Failed to update profile.';
-        successMessage.value = '';
-    }
+  formData.append('name', accountDataLocal.value.firstName) // Using firstName as Full Name for now as DB has 'name'
+  formData.append('email', accountDataLocal.value.email)
+    
+  if (avatarFile.value) {
+    formData.append('avatar', avatarFile.value)
+  }
+
+  try {
+    const response = await axios.post('/api/profile', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+
+    successMessage.value = 'Profile updated successfully!'
+    errorMessage.value = ''
+  } catch (error) {
+    console.error(error)
+    errorMessage.value = error.response?.data?.message || 'Failed to update profile.'
+    successMessage.value = ''
+  }
 }
 </script>
 
@@ -150,16 +153,29 @@ const submitProfile = async () => {
         <VDivider />
 
         <VCardText>
-          <VAlert v-if="successMessage" type="success" class="mb-4">{{ successMessage }}</VAlert>
-          <VAlert v-if="errorMessage" type="error" class="mb-4">{{ errorMessage }}</VAlert>
+          <VAlert
+            v-if="successMessage"
+            type="success"
+            class="mb-4"
+          >
+            {{ successMessage }}
+          </VAlert>
+          <VAlert
+            v-if="errorMessage"
+            type="error"
+            class="mb-4"
+          >
+            {{ errorMessage }}
+          </VAlert>
           
           <!-- 👉 Form -->
-          <VForm class="mt-6" @submit.prevent="submitProfile">
+          <VForm
+            class="mt-6"
+            @submit.prevent="submitProfile"
+          >
             <VRow>
               <!-- 👉 First Name -->
-              <VCol
-                cols="12"
-              >
+              <VCol cols="12">
                 <VTextField
                   v-model="accountDataLocal.firstName"
                   label="Full Name"
@@ -183,7 +199,9 @@ const submitProfile = async () => {
                 cols="12"
                 class="d-flex flex-wrap gap-4"
               >
-                <VBtn type="submit">Save changes</VBtn>
+                <VBtn type="submit">
+                  Save changes
+                </VBtn>
 
                 <VBtn
                   color="secondary"

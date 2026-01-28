@@ -59,14 +59,16 @@ const handleNavScroll = evt => {
           to="/"
           class="app-logo app-title-wrapper"
         >
-          <!-- <div
+          <!--
+            <div
             class="d-flex"
             v-html="logo"
-          />
+            />
 
-          <h1 class="leading-normal">
+            <h1 class="leading-normal">
             sneat
-          </h1> -->
+            </h1> 
+          -->
         </RouterLink>
       </slot>
     </div>

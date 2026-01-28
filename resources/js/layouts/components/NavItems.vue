@@ -1,7 +1,7 @@
 <script setup>
-import { can } from '@/utils/permissions';
-import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
-import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle.vue';
+import { can } from '@/utils/permissions'
+import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
+import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle.vue'
 </script>
 
 <template>
@@ -15,155 +15,161 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
   <!-- 👉 Front Pages -->
-  <!-- <VerticalNavGroup
+  <!--
+    <VerticalNavGroup
     :item="{
-      title: 'Front Pages',
-      icon: 'bx-file',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Front Pages',
+    icon: 'bx-file',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  >
+    >
     <VerticalNavLink
-      :item="{
-        title: 'Landing',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/landing-page',
-        target: '_blank',
-      }"
+    :item="{
+    title: 'Landing',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/landing-page',
+    target: '_blank',
+    }"
     />
     <VerticalNavLink
-      :item="{
-        title: 'Pricing',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/pricing',
-        target: '_blank',
-      }"
+    :item="{
+    title: 'Pricing',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/pricing',
+    target: '_blank',
+    }"
     />
     <VerticalNavLink
-      :item="{
-        title: 'Payment',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/payment',
-        target: '_blank',
-      }"
+    :item="{
+    title: 'Payment',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/payment',
+    target: '_blank',
+    }"
     />
     <VerticalNavLink
-      :item="{
-        title: 'Checkout',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/checkout',
-        target: '_blank',
-      }"
+    :item="{
+    title: 'Checkout',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/checkout',
+    target: '_blank',
+    }"
     />
     <VerticalNavLink
-      :item="{
-        title: 'Help Center',
-        href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/help-center',
-        target: '_blank',
-      }"
+    :item="{
+    title: 'Help Center',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/front-pages/help-center',
+    target: '_blank',
+    }"
     />
-  </VerticalNavGroup> -->
+    </VerticalNavGroup> 
+  -->
 
   <!-- 👉 Apps & Pages -->
-  <!-- <VerticalNavSectionTitle
+  <!--
+    <VerticalNavSectionTitle
     :item="{
-      heading: 'Apps & Pages',
+    heading: 'Apps & Pages',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Email',
-      icon: 'bx-envelope',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/email',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Email',
+    icon: 'bx-envelope',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/email',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Chat',
-      icon: 'bx-chat',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/chat',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Chat',
+    icon: 'bx-chat',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/chat',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Calendar',
-      icon: 'bx-calendar',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/calendar',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Calendar',
+    icon: 'bx-calendar',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/calendar',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Kanban',
-      icon: 'bx-grid',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/kanban',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Kanban',
+    icon: 'bx-grid',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/apps/kanban',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  />
+    />
 
-  <VerticalNavLink
+    <VerticalNavLink
     :item="{
-      title: 'Account Settings',
-      icon: 'bx-user',
-      to: '/account-settings',
+    title: 'Account Settings',
+    icon: 'bx-user',
+    to: '/account-settings',
     }"
-  />
+    />
 
-  <VerticalNavLink
+    <VerticalNavLink
     :item="{
-      title: 'Login',
-      icon: 'bx-log-in',
-      to: '/login',
+    title: 'Login',
+    icon: 'bx-log-in',
+    to: '/login',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Register',
-      icon: 'bx-user-plus',
-      to: '/register',
+    title: 'Register',
+    icon: 'bx-user-plus',
+    to: '/register',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Error',
-      icon: 'bx-info-circle',
-      to: '/no-existence',
+    title: 'Error',
+    icon: 'bx-info-circle',
+    to: '/no-existence',
     }"
-  /> -->
+    /> 
+  -->
 
   <!-- 👉 User Interface -->
-  <!-- <VerticalNavSectionTitle
+  <!--
+    <VerticalNavSectionTitle
     :item="{
-      heading: 'User Interface',
+    heading: 'User Interface',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Typography',
-      icon: 'bx-text',
-      to: '/typography',
+    title: 'Typography',
+    icon: 'bx-text',
+    to: '/typography',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Icons',
-      icon: 'bx-package',
-      to: '/icons',
+    title: 'Icons',
+    icon: 'bx-package',
+    to: '/icons',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Cards',
-      icon: 'bx-credit-card',
-      to: '/cards',
+    title: 'Cards',
+    icon: 'bx-credit-card',
+    to: '/cards',
     }"
-  /> -->
+    /> 
+  -->
 
   <!-- 👉 Users & Roles -->
   <VerticalNavSectionTitle
@@ -207,7 +213,7 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
     }"
   />
 
-    <VerticalNavLink
+  <VerticalNavLink
     v-if="can('read leaderboard')"
     :item="{
       title: 'Peringkat',
@@ -305,76 +311,80 @@ import VerticalNavSectionTitle from '@layouts/components/VerticalNavSectionTitle
   />
 
   <!-- 👉 Forms & Tables -->
-  <!-- <VerticalNavSectionTitle
+  <!--
+    <VerticalNavSectionTitle
     :item="{
-      heading: 'Forms & Tables',
+    heading: 'Forms & Tables',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Form Layouts',
-      icon: 'bx-layout',
-      to: '/form-layouts',
+    title: 'Form Layouts',
+    icon: 'bx-layout',
+    to: '/form-layouts',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Form Validation',
-      icon: 'bx-check-circle',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/forms/form-validation',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Form Validation',
+    icon: 'bx-check-circle',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/forms/form-validation',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Form Wizard',
-      icon: 'bx-align-middle',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/forms/form-wizard-numbered',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Form Wizard',
+    icon: 'bx-align-middle',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/forms/form-wizard-numbered',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Tables',
-      icon: 'bx-table',
-      to: '/tables',
+    title: 'Tables',
+    icon: 'bx-table',
+    to: '/tables',
     }"
-  /> -->
+    /> 
+  -->
 
   <!-- 👉 Others -->
-  <!-- <VerticalNavSectionTitle
+  <!--
+    <VerticalNavSectionTitle
     :item="{
-      heading: 'Others',
+    heading: 'Others',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Access Control',
-      icon: 'bx-command',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/access-control',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+    title: 'Access Control',
+    icon: 'bx-command',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-laravel-admin-template/demo-1/access-control',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Documentation',
-      icon: 'bx-file',
-      href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/documentation/guide/laravel-integration/folder-structure.html',
-      target: '_blank',
+    title: 'Documentation',
+    icon: 'bx-file',
+    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/documentation/guide/laravel-integration/folder-structure.html',
+    target: '_blank',
     }"
-  />
-  <VerticalNavLink
+    />
+    <VerticalNavLink
     :item="{
-      title: 'Raise Support',
-      href: 'https://github.com/themeselection/sneat-vuetify-vuejs-laravel-admin-template-free/issues',
-      icon: 'bx-phone',
-      target: '_blank',
+    title: 'Raise Support',
+    href: 'https://github.com/themeselection/sneat-vuetify-vuejs-laravel-admin-template-free/issues',
+    icon: 'bx-phone',
+    target: '_blank',
     }"
-  /> -->
+    /> 
+  -->
 </template>

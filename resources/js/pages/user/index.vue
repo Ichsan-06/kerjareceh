@@ -1,34 +1,36 @@
 <script setup>
-import axios from '@/plugins/axios';
-import { onMounted, ref } from 'vue';
+import axios from '@/plugins/axios'
+import { onMounted, ref } from 'vue'
 
-const users = ref([]);
+const users = ref([])
 
 const fetchUsers = async () => {
   try {
-    const response = await axios.get('/api/users');
+    const response = await axios.get('/api/users')
+
+
     // Assuming the API returns keys like { data: [...] } or just [...]
     // based on the controller: return response()->json($users); where $users is paginated
-    users.value = response.data.data; 
+    users.value = response.data.data 
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error('Error fetching users:', error)
   }
-};
+}
 
-const deleteUser = async (id) => {
+const deleteUser = async id => {
   if (confirm('Are you sure you want to delete this user?')) {
     try {
-      await axios.delete(`/api/users/${id}`);
-      fetchUsers();
+      await axios.delete(`/api/users/${id}`)
+      fetchUsers()
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error('Error deleting user:', error)
     }
   }
-};
+}
 
 onMounted(() => {
-  fetchUsers();
-});
+  fetchUsers()
+})
 </script>
 
 <template>
@@ -46,10 +48,18 @@ onMounted(() => {
     <VTable>
       <thead>
         <tr>
-          <th class="text-uppercase">ID</th>
-          <th class="text-uppercase">Name</th>
-          <th class="text-uppercase">Email</th>
-          <th class="text-uppercase">Actions</th>
+          <th class="text-uppercase">
+            ID
+          </th>
+          <th class="text-uppercase">
+            Name
+          </th>
+          <th class="text-uppercase">
+            Email
+          </th>
+          <th class="text-uppercase">
+            Actions
+          </th>
         </tr>
       </thead>
       <tbody>

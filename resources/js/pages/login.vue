@@ -23,6 +23,7 @@ const authThemeMask = computed(() => {
 const login = async () => {
   try {
     const response = await axios.post('/api/auth/login', form.value)
+
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
     localStorage.setItem('permissions', JSON.stringify(response.data.permissions))
@@ -74,11 +75,11 @@ const login = async () => {
       >
         <VCardText>
           <div class="d-flex d-lg-none align-center justify-center mb-6">
-             <VImg
-                :src="logo"
-                alt="logo"
-                width="120"
-              />
+            <VImg
+              :src="logo"
+              alt="logo"
+              width="120"
+            />
           </div>
 
           <h5 class="text-h5 mb-1">
@@ -140,16 +141,26 @@ const login = async () => {
                 </VBtn>
                 
                 <p class="text-center mt-5">
-                    <span>New on our platform? </span>
-                    <RouterLink class="text-primary" to="/register">
-                      Create an account
-                    </RouterLink>
+                  <span>New on our platform? </span>
+                  <RouterLink
+                    class="text-primary"
+                    to="/register"
+                  >
+                    Create an account
+                  </RouterLink>
                 </p>
                 <div class="text-center mt-2">
-                    <RouterLink class="text-secondary text-caption" to="/">
-                      <VIcon icon="bx-arrow-back" start size="small"/>
-                      Kembali ke Beranda
-                    </RouterLink>
+                  <RouterLink
+                    class="text-secondary text-caption"
+                    to="/"
+                  >
+                    <VIcon
+                      icon="bx-arrow-back"
+                      start
+                      size="small"
+                    />
+                    Kembali ke Beranda
+                  </RouterLink>
                 </div>
               </VCol>
             </VRow>

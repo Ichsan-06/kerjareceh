@@ -1,5 +1,5 @@
 <script setup>
-import axios from '@/plugins/axios';
+import axios from '@/plugins/axios'
 
 const isCurrentPasswordVisible = ref(false)
 const isNewPasswordVisible = ref(false)
@@ -19,31 +19,32 @@ const passwordRequirements = [
 ]
 
 const updatePassword = async () => {
-    if (newPassword.value !== confirmPassword.value) {
-        errorMessage.value = "Passwords do not match";
-        return;
-    }
+  if (newPassword.value !== confirmPassword.value) {
+    errorMessage.value = "Passwords do not match"
+    
+    return
+  }
 
-    loading.value = true;
-    errorMessage.value = '';
-    successMessage.value = '';
+  loading.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
 
-    try {
-        await axios.post('/api/profile/password', {
-            current_password: currentPassword.value,
-            password: newPassword.value,
-            password_confirmation: confirmPassword.value
-        });
-        successMessage.value = 'Password updated successfully.';
-        currentPassword.value = '';
-        newPassword.value = '';
-        confirmPassword.value = '';
-    } catch (error) {
-        console.error(error);
-        errorMessage.value = error.response?.data?.message || 'Failed to update password.';
-    } finally {
-        loading.value = false;
-    }
+  try {
+    await axios.post('/api/profile/password', {
+      current_password: currentPassword.value,
+      password: newPassword.value,
+      password_confirmation: confirmPassword.value,
+    })
+    successMessage.value = 'Password updated successfully.'
+    currentPassword.value = ''
+    newPassword.value = ''
+    confirmPassword.value = ''
+  } catch (error) {
+    console.error(error)
+    errorMessage.value = error.response?.data?.message || 'Failed to update password.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -54,8 +55,20 @@ const updatePassword = async () => {
       <VCard title="Change Password">
         <VForm @submit.prevent="updatePassword">
           <VCardText>
-            <VAlert v-if="successMessage" type="success" class="mb-4">{{ successMessage }}</VAlert>
-            <VAlert v-if="errorMessage" type="error" class="mb-4">{{ errorMessage }}</VAlert>
+            <VAlert
+              v-if="successMessage"
+              type="success"
+              class="mb-4"
+            >
+              {{ successMessage }}
+            </VAlert>
+            <VAlert
+              v-if="errorMessage"
+              type="error"
+              class="mb-4"
+            >
+              {{ errorMessage }}
+            </VAlert>
 
             <!-- 👉 Current Password -->
             <VRow>
@@ -136,7 +149,12 @@ const updatePassword = async () => {
 
           <!-- 👉 Action Buttons -->
           <VCardText class="d-flex flex-wrap gap-4">
-            <VBtn type="submit" :loading="loading">Save changes</VBtn>
+            <VBtn
+              type="submit"
+              :loading="loading"
+            >
+              Save changes
+            </VBtn>
 
             <VBtn
               type="reset"

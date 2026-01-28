@@ -1,47 +1,52 @@
 <script setup>
-import axios from '@/plugins/axios';
-import { formatCurrency } from '@/utils/formatters';
-import { onMounted, ref } from 'vue';
+import axios from '@/plugins/axios'
+import { formatCurrency } from '@/utils/formatters'
+import { onMounted, ref } from 'vue'
 
-const activeTab = ref(0);
+const activeTab = ref(0)
+
 const form = ref({
   amount: 20000,
   payment_method: 'bank_transfer',
   proof: null,
-});
-const history = ref([]);
-const loading = ref(false);
-const submitting = ref(false);
-const errors = ref({});
+})
 
-const presetAmounts = [20000, 50000, 100000, 200000, 500000];
+const history = ref([])
+const loading = ref(false)
+const submitting = ref(false)
+const errors = ref({})
 
-const onFileChange = (e) => {
-  const file = e.target.files[0];
-  form.value.proof = file;
-};
+const presetAmounts = [20000, 50000, 100000, 200000, 500000]
+
+const onFileChange = e => {
+  const file = e.target.files[0]
+
+  form.value.proof = file
+}
 
 const fetchHistory = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await axios.get('/api/topup');
-    history.value = response.data;
+    const response = await axios.get('/api/topup')
+
+    history.value = response.data
   } catch (error) {
-    console.error('Error fetching history:', error);
+    console.error('Error fetching history:', error)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const submitTopUp = async () => {
-  submitting.value = true;
-  errors.value = {};
+  submitting.value = true
+  errors.value = {}
 
-  const formData = new FormData();
-  formData.append('amount', form.value.amount);
-  formData.append('payment_method', form.value.payment_method);
+  const formData = new FormData()
+
+  formData.append('amount', form.value.amount)
+  formData.append('payment_method', form.value.payment_method)
   if (form.value.proof) {
-    formData.append('proof', form.value.proof);
+    formData.append('proof', form.value.proof)
   }
 
   try {
@@ -49,38 +54,46 @@ const submitTopUp = async () => {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-    });
+    })
+
     // Reset and switch to history
-    form.value = { amount: 20000, payment_method: 'bank_transfer', proof: null };
-    activeTab.value = 1;
-    fetchHistory();
+    form.value = { amount: 20000, payment_method: 'bank_transfer', proof: null }
+    activeTab.value = 1
+    fetchHistory()
   } catch (error) {
     if (error.response && error.response.status === 422) {
-      errors.value = error.response.data.errors;
+      errors.value = error.response.data.errors
     } else {
-      console.error('Error submitting top up:', error);
+      console.error('Error submitting top up:', error)
     }
   } finally {
-    submitting.value = false;
+    submitting.value = false
   }
-};
+}
 
-const resolveStatusColor = (status) => {
-  if (status === 'approved') return 'success';
-  if (status === 'rejected') return 'error';
-  return 'warning';
-};
+const resolveStatusColor = status => {
+  if (status === 'approved') return 'success'
+  if (status === 'rejected') return 'error'
+  
+  return 'warning'
+}
 
 onMounted(() => {
-  fetchHistory();
-});
+  fetchHistory()
+})
 </script>
 
 <template>
   <VContainer>
     <div class="d-flex align-center gap-4 mb-6">
-      <VIcon icon="bx-wallet" size="32" color="primary" />
-      <h2 class="text-h4">Top Up Saldo</h2>
+      <VIcon
+        icon="bx-wallet"
+        size="32"
+        color="primary"
+      />
+      <h2 class="text-h4">
+        Top Up Saldo
+      </h2>
     </div>
 
     <VCard>
@@ -95,15 +108,18 @@ onMounted(() => {
           <VWindowItem>
             <VForm @submit.prevent="submitTopUp">
               <VRow>
-                <VCol cols="12" md="6">
+                <VCol
+                  cols="12"
+                  md="6"
+                >
                   <VLabel>Pilih Nominal</VLabel>
                   <div class="d-flex flex-wrap gap-2 my-2">
                     <VChip
                       v-for="amount in presetAmounts"
                       :key="amount"
-                      @click="form.amount = amount"
                       :color="form.amount === amount ? 'primary' : 'default'"
                       class="cursor-pointer"
+                      @click="form.amount = amount"
                     >
                       {{ formatCurrency(amount) }}
                     </VChip>
@@ -118,7 +134,10 @@ onMounted(() => {
                   />
                 </VCol>
 
-                <VCol cols="12" md="6">
+                <VCol
+                  cols="12"
+                  md="6"
+                >
                   <VSelect
                     v-model="form.payment_method"
                     label="Metode Pembayaran"
@@ -132,21 +151,29 @@ onMounted(() => {
                   <VFileInput
                     label="Upload Bukti Transfer"
                     accept="image/*,application/pdf"
-                    @change="onFileChange"
                     :error-messages="errors.proof"
                     class="mt-4"
                     prepend-icon="bx-upload"
+                    @change="onFileChange"
                   />
                 </VCol>
 
                 <VCol cols="12">
-                  <VAlert type="info" variant="tonal" class="mb-4">
+                  <VAlert
+                    type="info"
+                    variant="tonal"
+                    class="mb-4"
+                  >
                     Silakan transfer ke:<br>
                     <b>BCA 6995110192 (a.n M Ichsan)</b><br>
                     Total Bayar: <b>{{ formatCurrency(form.amount) }}</b>
                   </VAlert>
 
-                  <VAlert type="danger" variant="tonal" class="mb-4">
+                  <VAlert
+                    type="danger"
+                    variant="tonal"
+                    class="mb-4"
+                  >
                     Silakan transfer ke:<br>
                     <b>GOPAY 085173476478 (a.n M Ichsan)</b><br>
                     Total Bayar: <b>{{ formatCurrency(form.amount) }}</b>
@@ -189,7 +216,12 @@ onMounted(() => {
               </template>
 
               <template #item.status="{ item }">
-                <VChip :color="resolveStatusColor(item.status)" size="small" label class="text-capitalize">
+                <VChip
+                  :color="resolveStatusColor(item.status)"
+                  size="small"
+                  label
+                  class="text-capitalize"
+                >
                   {{ item.status }}
                 </VChip>
               </template>

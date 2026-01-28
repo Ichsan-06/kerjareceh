@@ -24,6 +24,7 @@ const authThemeMask = computed(() => {
 const register = async () => {
   try {
     const response = await axios.post('/api/auth/register', form.value)
+
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
     localStorage.setItem('permissions', JSON.stringify(response.data.permissions))
@@ -32,8 +33,11 @@ const register = async () => {
     router.push('/dashboard')
   } catch (error) {
     console.error('Registration failed:', error)
+
+
     // Handle validation errors if present
     const message = error.response?.data?.message || 'Registration failed. Please try again.'
+
     alert(message)
   }
 }
@@ -79,11 +83,11 @@ const register = async () => {
       >
         <VCardText>
           <div class="d-flex d-lg-none align-center justify-center mb-6">
-             <VImg
-                :src="logo"
-                alt="logo"
-                width="120"
-              />
+            <VImg
+              :src="logo"
+              alt="logo"
+              width="120"
+            />
           </div>
 
           <h5 class="text-h5 mb-1">
@@ -169,22 +173,26 @@ const register = async () => {
                 </RouterLink>
               </VCol>
 
-              <!-- <VCol
+              <!--
+                <VCol
                 cols="12"
                 class="d-flex align-center"
-              >
+                >
                 <VDivider />
                 <span class="mx-4">or</span>
                 <VDivider />
-              </VCol> -->
+                </VCol> 
+              -->
 
               <!-- auth providers -->
-              <!-- <VCol
+              <!--
+                <VCol
                 cols="12"
                 class="text-center"
-              >
+                >
                 <AuthProvider />
-              </VCol> -->
+                </VCol> 
+              -->
             </VRow>
           </VForm>
         </VCardText>

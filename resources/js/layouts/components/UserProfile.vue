@@ -8,23 +8,24 @@ const router = useRouter()
 const userData = ref({ name: 'User', role: 'Member', avatar: avatar1 })
 
 const fetchUser = async () => {
-    try {
-        const response = await axios.get('/api/user');
-        const user = response.data;
-        userData.value = {
-            id: user.id,
-            name: user.name,
-            role: 'Member', // Or fetch role
-            avatar: user.avatar ? `/storage/${user.avatar}` : avatar1
-        };
-        localStorage.setItem('user', JSON.stringify(userData.value));
-    } catch (error) {
-        console.error('Error fetching user:', error);
+  try {
+    const response = await axios.get('/api/user')
+    const user = response.data
+
+    userData.value = {
+      id: user.id,
+      name: user.name,
+      role: 'Member', // Or fetch role
+      avatar: user.avatar ? `/storage/${user.avatar}` : avatar1,
     }
+    localStorage.setItem('user', JSON.stringify(userData.value))
+  } catch (error) {
+    console.error('Error fetching user:', error)
+  }
 }
 
 onMounted(() => {
-    fetchUser();
+  fetchUser()
 })
 
 const logout = async () => {
@@ -106,7 +107,10 @@ const logout = async () => {
           </VListItem>
 
           <!-- 👉 Settings -->
-          <VListItem link to="/account-settings">
+          <VListItem
+            link
+            to="/account-settings"
+          >
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -119,30 +123,34 @@ const logout = async () => {
           </VListItem>
 
           <!-- 👉 Pricing -->
-          <!-- <VListItem link>
+          <!--
+            <VListItem link>
             <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="bx-dollar"
-                size="22"
-              />
+            <VIcon
+            class="me-2"
+            icon="bx-dollar"
+            size="22"
+            />
             </template>
 
             <VListItemTitle>Pricing</VListItemTitle>
-          </VListItem> -->
+            </VListItem> 
+          -->
 
           <!-- 👉 FAQ -->
-          <!-- <VListItem link>
+          <!--
+            <VListItem link>
             <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="bx-help-circle"
-                size="22"
-              />
+            <VIcon
+            class="me-2"
+            icon="bx-help-circle"
+            size="22"
+            />
             </template>
 
             <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem> -->
+            </VListItem> 
+          -->
 
           <!-- Divider -->
           <VDivider class="my-2" />

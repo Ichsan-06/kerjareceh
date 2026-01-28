@@ -45,19 +45,21 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 
 
         <!-- 👉 Search -->
-        <!-- <div
+        <!--
+          <div
           class="d-flex align-center cursor-pointer ms-lg-n3"
           style="user-select: none;"
-        >
+          >
           <IconBtn>
-            <VIcon icon="bx-search" />
+          <VIcon icon="bx-search" />
           </IconBtn>
 
           <span class="d-none d-md-flex align-center text-disabled ms-2">
-            <span class="me-2">Search</span>
-            <span class="meta-key">&#8984;K</span>
+          <span class="me-2">Search</span>
+          <span class="meta-key">&#8984;K</span>
           </span>
-        </div> -->
+          </div> 
+        -->
 
         <VSpacer />
 
@@ -73,11 +75,17 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
         to="/"
         class="app-logo app-title-wrapper"
       >
-        <img src="@images/logo2.png" alt="Logo" width="200"/>
+        <img
+          src="@images/logo2.png"
+          alt="Logo"
+          width="200"
+        >
 
-        <!-- <h1 class="app-logo-title">
+        <!--
+          <h1 class="app-logo-title">
           sneat
-        </h1> -->
+          </h1> 
+        -->
       </RouterLink>
 
       <IconBtn
