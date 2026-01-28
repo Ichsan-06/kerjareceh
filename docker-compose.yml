@@ -6,32 +6,32 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: bukudigital-app-image
-    container_name: bukudigital-app
+    image: recehan-app-image
+    container_name: recehan-app
     restart: unless-stopped
     working_dir: /var/www
     volumes:
       - ./:/var/www
     networks:
-      - bukudigital
+      - recehan
 
   # 2. Web Server (Nginx)
   webserver:
     image: nginx:alpine
-    container_name: bukudigital-nginx
+    container_name: recehan-nginx
     restart: unless-stopped
     ports:
-      - "8000:80"
+      - "8083:80"
     volumes:
       - ./:/var/www
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
-      - bukudigital
+      - recehan
 
   # 3. Database (MySQL)
   db:
     image: mysql:8.0
-    container_name: bukudigital-db
+    container_name: recehan-db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -43,12 +43,12 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
     networks:
-      - bukudigital
+      - recehan
 
   # 4. PHPMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: bukudigital-pma
+    container_name: recehan-pma
     links:
       - db
     environment:
@@ -57,12 +57,12 @@ services:
       PMA_ARBITRARY: 1
     restart: always
     ports:
-      - 8081:80
+      - 8084:80
     networks:
-      - bukudigital
+      - recehan
 
 networks:
-  bukudigital:
+  recehan:
     driver: bridge
 
 volumes:
