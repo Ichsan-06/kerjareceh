@@ -2,12 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+
 
 // Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::prefix('auth')->group(function () {
     Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
     Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('password/email', [\App\Http\Controllers\AuthController::class, 'sendPasswordResetLink']);
+    Route::post('password/reset', [\App\Http\Controllers\AuthController::class, 'resetPassword']);
 });
 
 Route::get('/landing-stats', [App\Http\Controllers\LandingController::class, 'index']);

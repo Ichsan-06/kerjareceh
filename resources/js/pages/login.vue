@@ -33,6 +33,27 @@ const login = async () => {
     alert('Login gagal. Silakan periksa kredensial Anda.')
   }
 }
+
+const isForgotPasswordDialogVisible = ref(false)
+const forgotPasswordEmail = ref('')
+const isSendingResetLink = ref(false)
+
+const sendResetLink = async () => {
+  if (!forgotPasswordEmail.value) return
+
+  isSendingResetLink.value = true
+  try {
+    const response = await axios.post('/api/auth/password/email', { email: forgotPasswordEmail.value })
+    alert(response.data.message || 'Tautan reset kata sandi telah dikirim ke email Anda.')
+    isForgotPasswordDialogVisible.value = false
+    forgotPasswordEmail.value = ''
+  } catch (error) {
+    console.error('Failed to send reset link:', error)
+    alert(error.response?.data?.message || 'Gagal mengirim tautan reset kata sandi. Silakan coba lagi.')
+  } finally {
+    isSendingResetLink.value = false
+  }
+}
 </script>
 
 <template>
@@ -126,6 +147,7 @@ const login = async () => {
                   <a
                     class="text-primary"
                     href="javascript:void(0)"
+                    @click="isForgotPasswordDialogVisible = true"
                   >
                     Lupa Kata Sandi?
                   </a>
@@ -169,6 +191,49 @@ const login = async () => {
       </VCard>
     </VCol>
   </VRow>
+
+  <!-- Forgot Password Dialog -->
+  <VDialog
+    v-model="isForgotPasswordDialogVisible"
+    max-width="500"
+  >
+    <VCard title="Lupa Kata Sandi">
+      <VCardText>
+        Silakan masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mereset kata sandi Anda.
+      </VCardText>
+
+      <VCardText>
+        <VTextField
+          v-model="forgotPasswordEmail"
+          label="Email"
+          placeholder="johndoe@email.com"
+          type="email"
+          autofocus
+          @keyup.enter="sendResetLink"
+        />
+      </VCardText>
+
+      <VCardActions>
+        <VSpacer />
+        <VBtn
+          color="secondary"
+          variant="tonal"
+          @click="isForgotPasswordDialogVisible = false"
+        >
+          Batal
+        </VBtn>
+        <VBtn
+          color="primary"
+          variant="elevated"
+          :loading="isSendingResetLink"
+          :disabled="!forgotPasswordEmail"
+          @click="sendResetLink"
+        >
+          Kirim Tautan
+        </VBtn>
+      </VCardActions>
+    </VCard>
+  </VDialog>
 </template>
 
 <style lang="scss">

@@ -3,15 +3,24 @@ import axios from '@/plugins/axios'
 import { onMounted, ref } from 'vue'
 
 const users = ref([])
+const pagination = ref({
+  currentPage: 1,
+  lastPage: 1,
+  total: 0,
+  perPage: 10,
+})
 
-const fetchUsers = async () => {
+const fetchUsers = async (page = 1) => {
   try {
-    const response = await axios.get('/api/users')
+    const response = await axios.get(`/api/users?page=${page}`)
 
-
-    // Assuming the API returns keys like { data: [...] } or just [...]
-    // based on the controller: return response()->json($users); where $users is paginated
-    users.value = response.data.data 
+    users.value = response.data.data
+    pagination.value = {
+      currentPage: response.data.current_page,
+      lastPage: response.data.last_page,
+      total: response.data.total,
+      perPage: response.data.per_page,
+    }
   } catch (error) {
     console.error('Error fetching users:', error)
   }
@@ -21,7 +30,7 @@ const deleteUser = async id => {
   if (confirm('Are you sure you want to delete this user?')) {
     try {
       await axios.delete(`/api/users/${id}`)
-      fetchUsers()
+      fetchUsers(pagination.value.currentPage)
     } catch (error) {
       console.error('Error deleting user:', error)
     }
@@ -49,7 +58,7 @@ onMounted(() => {
       <thead>
         <tr>
           <th class="text-uppercase">
-            ID
+            No
           </th>
           <th class="text-uppercase">
             Name
@@ -64,10 +73,10 @@ onMounted(() => {
       </thead>
       <tbody>
         <tr
-          v-for="user in users"
+          v-for="(user, index) in users"
           :key="user.id"
         >
-          <td>{{ user.id }}</td>
+          <td>{{ (pagination.currentPage - 1) * pagination.perPage + index + 1 }}</td>
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
           <td>
@@ -91,5 +100,12 @@ onMounted(() => {
         </tr>
       </tbody>
     </VTable>
+    <VCardText>
+      <VPagination
+        v-model="pagination.currentPage"
+        :length="pagination.lastPage"
+        @update:model-value="fetchUsers"
+      />
+    </VCardText>
   </VCard>
 </template>
