@@ -21,6 +21,29 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
           <VIcon icon="bx-menu" />
         </IconBtn>
 
+        <div class="d-flex align-center ms-lg-n3">
+          <IconBtn
+            href="https://chat.whatsapp.com/your-group-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <VIcon
+              icon="bxl-whatsapp"
+              color="success"
+            />
+          </IconBtn>
+
+          <a
+            href="https://chat.whatsapp.com/FaROCBxAgUh0E9kAuQxQzS"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="d-none d-md-flex align-center text-disabled text-decoration-none ms-2"
+          >
+            Join Grup WhatsApp
+          </a>
+        </div>
+
+
         <!-- 👉 Search -->
         <!-- <div
           class="d-flex align-center cursor-pointer ms-lg-n3"
